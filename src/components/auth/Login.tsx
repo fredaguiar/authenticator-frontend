@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { Button, Text } from '@rneui/themed';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
@@ -8,6 +8,7 @@ import { Formik } from 'formik';
 import GlobalStyles from '../../styles/GlobalStyles';
 import KeyboardAvoid from '../../utils/KeyboardAvoid';
 import { RootStackParams } from '../../nav/RootNavigator';
+import { useAuth } from '../../context/AuthContext';
 
 type LoginNavProp = NavigationProp<RootStackParams>;
 
@@ -28,6 +29,7 @@ const GQL_ALIVE = gql`
 `;
 
 const Login = ({}: {}) => {
+  const authContext = useAuth();
   const navigation = useNavigation<LoginNavProp>();
   const [errorMsg, setErrorMsg] = useState<string>();
   const [login, { data, loading, error }] = useMutation(GQL_LOGIN);
@@ -54,11 +56,12 @@ const Login = ({}: {}) => {
             password: '',
           }}
           onSubmit={async (values) => {
-            login({
-              variables: {
-                userInput: { email: values.email, password: values.password },
-              },
-            });
+            // login({
+            //   variables: {
+            //     userInput: { email: values.email, password: values.password },
+            //   },
+            // });
+            authContext.login(values.email, values.password);
           }}>
           {({ handleChange, handleBlur, handleSubmit, values }) => (
             <View>

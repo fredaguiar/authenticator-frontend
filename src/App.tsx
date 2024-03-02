@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { registerRootComponent } from 'expo';
 import React from 'react';
 import RootNavigator from './nav/RootNavigator';
+import { AuthProvider } from './context/AuthContext';
 
 const httpLink = new HttpLink({
   uri: process.env.EXPO_PUBLIC_APOLLO_SERVER_URI, // localhost won't work
@@ -18,9 +19,11 @@ const client = new ApolloClient({
 export default function App() {
   return (
     <ApolloProvider client={client}>
-      <NavigationContainer>
-        <RootNavigator />
-      </NavigationContainer>
+      <AuthProvider>
+        <NavigationContainer>
+          <RootNavigator />
+        </NavigationContainer>
+      </AuthProvider>
     </ApolloProvider>
   );
 }
