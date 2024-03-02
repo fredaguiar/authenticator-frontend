@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import Login from '../components/auth/Login';
 import Signup from '../components/auth/Signup';
 import Home from '../components/auth/Home';
-import { AuthProvider, useAuth } from '../context/AuthContext';
+import { useAuthContext } from '../context/AuthContext';
 
 export type RootStackParams = {
   Login: undefined;
@@ -43,7 +43,7 @@ const HomeRootStack = () => (
 );
 
 const RootNavigator = () => {
-  const authContext = useAuth();
+  const authContext = useAuthContext();
 
   console.log('INNNNNN RootNavigator authContext.user', authContext.user);
 

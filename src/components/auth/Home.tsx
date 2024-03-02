@@ -1,15 +1,15 @@
 import { Button, Text } from '@rneui/themed';
 import { View } from 'react-native';
-import { useAuth } from '../../context/AuthContext';
+import { useAuthContext } from '../../context/AuthContext';
 
 const Home = ({}: {}) => {
-  const authContext = useAuth();
+  const { user, logout } = useAuthContext();
   return (
     <View>
-      <Text>You are logged in</Text>
+      <Text>User: {user?.name}</Text>
       <Button
         onPress={() => {
-          authContext.logout();
+          logout();
         }}
         title="Logout">
         <Text>Logout</Text>

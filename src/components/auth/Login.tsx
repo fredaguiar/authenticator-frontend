@@ -1,41 +1,20 @@
-import { useContext, useState } from 'react';
-import { gql, useMutation, useQuery } from '@apollo/client';
+import { useState } from 'react';
 import { Button, Text } from '@rneui/themed';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-
 import { Formik } from 'formik';
 import GlobalStyles from '../../styles/GlobalStyles';
 import KeyboardAvoid from '../../utils/KeyboardAvoid';
 import { RootStackParams } from '../../nav/RootNavigator';
-import { useAuth } from '../../context/AuthContext';
+import { useAuthContext } from '../../context/AuthContext';
 
 type LoginNavProp = NavigationProp<RootStackParams>;
 
-const GQL_LOGIN = gql`
-  mutation Login($userInput: UserLogin!) {
-    login(userInput: $userInput) {
-      name
-      email
-      token
-    }
-  }
-`;
-
-const GQL_ALIVE = gql`
-  query Query {
-    alive
-  }
-`;
-
 const Login = ({}: {}) => {
-  const authContext = useAuth();
+  const { login, loadingLogin, errorLogin } = useAuthContext();
   const navigation = useNavigation<LoginNavProp>();
-  const [errorMsg, setErrorMsg] = useState<string>();
-  const [login, { data, loading, error }] = useMutation(GQL_LOGIN);
-  // const { data, loading, error } = useQuery(GQL_ALIVE);
 
-  if (loading)
+  if (loadingLogin)
     return (
       <View>
         <Text>Loading...</Text>
@@ -45,23 +24,13 @@ const Login = ({}: {}) => {
   return (
     <KeyboardAvoid>
       <View style={[GlobalStyles.AndroidSafeArea, GlobalStyles.SkyBackground]}>
-        <View>
-          {error && <Text style={{ color: 'red' }}>Error: {error.message}</Text>}
-          {/* <Text>Server: {data?.alive}</Text> */}
-          <Text>Logged in: {data?.login?.name}</Text>
-        </View>
         <Formik
           initialValues={{
             email: '',
             password: '',
           }}
-          onSubmit={async (values) => {
-            // login({
-            //   variables: {
-            //     userInput: { email: values.email, password: values.password },
-            //   },
-            // });
-            authContext.login(values.email, values.password);
+          onSubmit={(values) => {
+            login(values.email, values.password);
           }}>
           {({ handleChange, handleBlur, handleSubmit, values }) => (
             <View>
@@ -81,7 +50,7 @@ const Login = ({}: {}) => {
                 secureTextEntry={true}
                 style={{ backgroundColor: 'white', margin: 5 }}
               />
-              {errorMsg && <Text style={{ color: 'red' }}>{errorMsg}</Text>}
+              {errorLogin && <Text style={{ color: 'red' }}>{errorLogin.message}</Text>}
               <Button onPress={handleSubmit as any} title="Login" buttonStyle={{ margin: 5 }}>
                 <Text>Login</Text>
               </Button>

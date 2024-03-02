@@ -4,6 +4,7 @@ import { Formik } from 'formik';
 import KeyboardAvoid from '../../utils/KeyboardAvoid';
 import GlobalStyles from '../../styles/GlobalStyles';
 import { gql, useMutation } from '@apollo/client';
+import { useAuthContext } from '../../context/AuthContext';
 
 const GQL_SIGNUP = gql`
   mutation SigupUser($userInput: UserInput!) {
@@ -16,9 +17,9 @@ const GQL_SIGNUP = gql`
 `;
 
 const Signup = ({}: {}) => {
-  const [signup, { data, loading, error }] = useMutation(GQL_SIGNUP);
+  const { signup, loadingSignup, errorSignUp } = useAuthContext();
 
-  if (loading)
+  if (loadingSignup)
     return (
       <View>
         <Text>Loading...</Text>
@@ -29,8 +30,7 @@ const Signup = ({}: {}) => {
     <KeyboardAvoid>
       <View style={[GlobalStyles.AndroidSafeArea, GlobalStyles.SkyBackground]}>
         <View>
-          {error && <Text style={{ color: 'red' }}>Error: {error.message}</Text>}
-          <Text>Logged in: {data?.sigupUser?.name}</Text>
+          {errorSignUp && <Text style={{ color: 'red' }}>Error: {errorSignUp.message}</Text>}
         </View>
         <Formik
           initialValues={{
@@ -39,11 +39,7 @@ const Signup = ({}: {}) => {
             password: '',
           }}
           onSubmit={(values) => {
-            signup({
-              variables: {
-                userInput: { name: values.name, email: values.email, password: values.password },
-              },
-            });
+            signup(values.name, values.email, values.password);
           }}>
           {({ handleChange, handleBlur, handleSubmit, values }) => (
             <View>
