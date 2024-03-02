@@ -12,7 +12,7 @@ import { RootStackParams } from '../../nav/RootNavigator';
 type LoginNavProp = NavigationProp<RootStackParams>;
 
 const GQL_LOGIN = gql`
-  mutation Mutation($userInput: UserLogin!) {
+  mutation Login($userInput: UserLogin!) {
     login(userInput: $userInput) {
       name
       email
@@ -46,7 +46,7 @@ const Login = ({}: {}) => {
         <View>
           {error && <Text style={{ color: 'red' }}>Error: {error.message}</Text>}
           {/* <Text>Server: {data?.alive}</Text> */}
-          <Text>HELLO: {data?.login?.name}</Text>
+          <Text>Logged in: {data?.login?.name}</Text>
         </View>
         <Formik
           initialValues={{

@@ -6,7 +6,7 @@ import React from 'react';
 import RootNavigator from './nav/RootNavigator';
 
 const httpLink = new HttpLink({
-  uri: 'http://209.52.107.249:4000/graphql', // localhost won't work
+  uri: process.env.EXPO_PUBLIC_APOLLO_SERVER_URI, // localhost won't work
   credentials: 'include',
 });
 
