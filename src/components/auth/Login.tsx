@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button, Text } from '@rneui/themed';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import { Formik } from 'formik';
 import GlobalStyles from '../../styles/GlobalStyles';
 import KeyboardAvoid from '../../utils/KeyboardAvoid';
@@ -11,7 +12,8 @@ import { useAuthContext } from '../../context/AuthContext';
 type LoginNavProp = NavigationProp<RootStackParams>;
 
 const Login = ({}: {}) => {
-  const { login, loadingLogin, errorLogin } = useAuthContext();
+  const { login, loadingLogin, errorLogin, loginGoogle, loadingGoogle, errorGoogle, logout } =
+    useAuthContext();
   const navigation = useNavigation<LoginNavProp>();
 
   if (loadingLogin)
@@ -54,11 +56,23 @@ const Login = ({}: {}) => {
               <Button onPress={handleSubmit as any} title="Login" buttonStyle={{ margin: 5 }}>
                 <Text>Login</Text>
               </Button>
+              {errorGoogle && (
+                <Text style={{ color: 'red' }}>
+                  Google authentication error: {errorGoogle.message}
+                </Text>
+              )}
+              <GoogleSigninButton
+                size={GoogleSigninButton.Size.Wide}
+                color={GoogleSigninButton.Color.Dark}
+                onPress={loginGoogle}
+                disabled={loadingGoogle}
+              />
               <Button
-                onPress={handleSubmit as any}
-                title="Google sign-in"
-                buttonStyle={{ margin: 5 }}>
-                <Text>Google sign-in</Text>
+                onPress={() => {
+                  logout();
+                }}
+                title="Logout">
+                <Text>Logout</Text>
               </Button>
               <Button
                 onPress={handleSubmit as any}
