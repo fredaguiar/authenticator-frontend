@@ -5,7 +5,7 @@ export default StyleSheet.create({
   AndroidSafeArea: {
     flex: 1,
     backgroundColor: 'white',
-    paddingTop: Platform.OS === 'android' ? Constants.statusBarHeight : 0,
+    paddingTop: Platform.OS === 'android' ? 10 : 0,
   },
   SkyBackground: {
     backgroundColor: '#DFE9ED',
@@ -13,9 +13,7 @@ export default StyleSheet.create({
   SkyBackgroundDark: {
     backgroundColor: '#96d5ee',
   },
-  ImageStreet: {
-    aspectRatio: 1,
-    width: '100%',
-    flex: 1,
+  Container: {
+    paddingHorizontal: 10,
   },
 });

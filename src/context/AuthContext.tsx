@@ -6,11 +6,14 @@ import { ApolloError, gql, useMutation, useQuery } from '@apollo/client';
 const JWT_TOKEN = 'JID';
 
 const GQL_LOGIN = gql`
-  mutation Login($userInput: UserLogin!) {
-    login(userInput: $userInput) {
-      name
+  mutation Login($credentials: Credentials!) {
+    login(credentials: $credentials) {
+      firstName
+      lastName
+      language
+      country
       email
-      token
+      password
     }
   }
 `;
@@ -18,24 +21,34 @@ const GQL_LOGIN = gql`
 const GQL_SIGNUP = gql`
   mutation SigupUser($userInput: UserInput!) {
     sigupUser(userInput: $userInput) {
-      name
+      firstName
+      lastName
+      language
+      country
       email
-      token
+      password
     }
   }
 `;
 
 type TUser = {
-  name: string | null;
-  email: string | null;
-  token: string | null;
+  firstName: string;
+  lastName: string;
+  language: string;
+  country: string;
+  email: string;
+  password?: string;
+  token: string;
   type: 'auth' | 'google';
-} | null;
+};
+
+type TSignUp = Omit<TUser, 'type' | 'token'>;
+type TCredentials = Pick<TUser, 'email' | 'password'>;
 
 type AuthProps = {
-  user?: TUser;
-  login: (email: string, password: string) => void;
-  signup: (name: string, email: string, password: string) => void;
+  user: TUser | null;
+  login: (credentials: TCredentials) => void;
+  signup: (user: TSignUp) => void;
   logout: () => void;
   loginGoogle: () => void;
   loadingLogin: boolean;
@@ -49,7 +62,7 @@ type AuthProps = {
 const AuthContext = createContext<AuthProps | undefined>(undefined);
 
 const AuthProvider = ({ children }: { children: JSX.Element }) => {
-  const [user, setUser] = useState<TUser>(null);
+  const [user, setUser] = useState<TUser | null>(null);
   const [loadingGoogle, setLoadingGoogle] = useState<boolean>(false);
   const [errorGoogle, setErrorGoogle] = useState<any>(null);
   const secureStore = useSecureStore();
@@ -65,11 +78,14 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
       setUser({ ...data.login, type: 'auth' });
       // TODO: set authorization header
     },
+    onError(error) {
+      console.log('LOGIN ERROR:', error.message);
+    },
   });
 
   const [signupMutation, { loading: loadingSignup, error: errorSignUp }] = useMutation(GQL_SIGNUP, {
     onCompleted: (data) => {
-      console.log('signupMutation COMPLETE. token:', data.sigupUser.token);
+      console.log('signupMutation COMPLETE. token:', data.sigupUser);
       secureStore.setItem(JWT_TOKEN, data.sigupUser.token);
       setUser({ ...data.sigupUser, type: 'auth' });
       // TODO: set authorization header
@@ -84,13 +100,23 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
       console.log('11111111 loginGoogle Before GoogleSignin.signIn');
       const gUser = await GoogleSignin.signIn();
       console.log('GOOGLE YES!!!', gUser?.user?.name);
-      const { name, email } = gUser?.user;
-      setUser({ name, email, token: gUser?.idToken, type: 'google' });
+      let { name: firstName, email, familyName: lastName } = gUser?.user;
+      firstName = firstName ?? '';
+      lastName = firstName ?? '';
+      setUser({
+        firstName,
+        lastName,
+        email,
+        type: 'google',
+        language: 'TODO',
+        country: 'TODO',
+        token: 'TODO',
+      });
       setLoadingGoogle(false);
-    } catch (exGoogle: any) {
-      console.log('ERRRR GOOGLE', JSON.stringify(exGoogle));
+    } catch (exceptionGoogle: any) {
+      console.log('ERRRR GOOGLE', JSON.stringify(exceptionGoogle));
       setLoadingGoogle(false);
-      setErrorGoogle(exGoogle.message);
+      setErrorGoogle(exceptionGoogle.message);
     }
   };
 
@@ -102,18 +128,19 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
   //   reloadToken();
   // }, []);
 
-  const login = (email: string, password: string) => {
+  const login = ({ email, password }: TCredentials) => {
+    console.log('LOGIN', email, password);
     loginMutation({
       variables: {
-        userInput: { email, password },
+        credentials: { email, password },
       },
     });
   };
 
-  const signup = (name: string, email: string, password: string) => {
+  const signup = ({ firstName, lastName, language, country, email, password }: TSignUp) => {
     signupMutation({
       variables: {
-        userInput: { name, email, password },
+        userInput: { firstName, lastName, language, country, email, password },
       },
     });
   };
@@ -159,4 +186,4 @@ const useAuthContext = (): AuthProps => {
   return context;
 };
 
-export { AuthProvider, useAuthContext, TUser };
+export { AuthProvider, useAuthContext, TUser, TSignUp, TCredentials };

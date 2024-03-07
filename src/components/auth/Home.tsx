@@ -6,7 +6,7 @@ const Home = ({}: {}) => {
   const { user, logout } = useAuthContext();
   return (
     <View>
-      <Text>User: {user?.name}</Text>
+      <Text>User: {user?.firstName}</Text>
       <Button
         onPress={() => {
           logout();

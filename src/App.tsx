@@ -2,7 +2,8 @@ import { AppRegistry } from 'react-native';
 import { ApolloClient, InMemoryCache, ApolloProvider, HttpLink } from '@apollo/client';
 import { NavigationContainer } from '@react-navigation/native';
 import { registerRootComponent } from 'expo';
-import React from 'react';
+import { ThemeProvider } from '@rneui/themed';
+import { theme } from './styles/theme';
 import RootNavigator from './nav/RootNavigator';
 import { AuthProvider } from './context/AuthContext';
 
@@ -21,7 +22,9 @@ export default function App() {
     <ApolloProvider client={client}>
       <AuthProvider>
         <NavigationContainer>
-          <RootNavigator />
+          <ThemeProvider theme={theme}>
+            <RootNavigator />
+          </ThemeProvider>
         </NavigationContainer>
       </AuthProvider>
     </ApolloProvider>
