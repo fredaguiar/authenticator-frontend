@@ -1,42 +1,19 @@
-import { Button, Divider, Icon, Input, Text, CheckBox } from '@rneui/themed';
-import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { Button, Input, Text, CheckBox } from '@rneui/themed';
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { Formik } from 'formik';
 import KeyboardAvoid from '../../utils/KeyboardAvoid';
 import GlobalStyles from '../../styles/GlobalStyles';
-import { gql, useMutation } from '@apollo/client';
 import { useAuthContext } from '../../context/AuthContext';
 import { useState } from 'react';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { RootStackParams } from '../../nav/RootNavigator';
-
-const GQL_SIGNUP = gql`
-  mutation SigupUser($userInput: UserInput!) {
-    sigupUser(userInput: $userInput) {
-      name
-      email
-      token
-    }
-  }
-`;
-
-const LANGUAGES = [
-  { label: 'Portuguese', value: 'pt' },
-  { label: 'English', value: 'en' },
-  { label: 'Spanish', value: 'es' },
-];
-const COUNTRIES = [
-  { label: 'Brazil', value: 'br' },
-  { label: 'United States', value: 'us' },
-  { label: 'Mexico', value: 'mx' },
-];
-
-type SignupNavProp = NavigationProp<RootStackParams>;
+import { PublicRootStackParams } from '../../nav/RootNavigator';
+import { COUNTRIES, LANGUAGES } from '../../Const';
 
 const Signup = ({}: {}) => {
   const { signup, loadingSignup, errorSignUp } = useAuthContext();
   const [terms, setTerms] = useState(false);
-  const navigation = useNavigation<SignupNavProp>();
+  const navigation = useNavigation<NavigationProp<PublicRootStackParams>>();
 
   if (loadingSignup)
     return (
@@ -47,7 +24,7 @@ const Signup = ({}: {}) => {
 
   return (
     <KeyboardAvoid>
-      <View style={[GlobalStyles.AndroidSafeArea, GlobalStyles.SkyBackground]}>
+      <ScrollView style={[GlobalStyles.AndroidSafeArea, GlobalStyles.SkyBackground]}>
         <View>
           {errorSignUp && <Text style={{ color: 'red' }}>Error: {errorSignUp.message}</Text>}
         </View>
@@ -71,33 +48,27 @@ const Signup = ({}: {}) => {
             });
           }}>
           {({ handleChange, handleBlur, handleSubmit, values }) => (
-            <View style={{ display: 'flex', flexDirection: 'column' }}>
-              <View style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <View style={{ display: 'flex', flexDirection: 'row' }}>
-                  <Text style={styles.inputLabel}>Language</Text>
-                  <Picker
-                    style={styles.dropDown}
-                    selectedValue={values.language}
-                    onValueChange={handleChange('language')}
-                    mode="dropdown">
-                    {LANGUAGES.map((item) => (
-                      <Picker.Item key={item.value} label={item.label} value={item.value} />
-                    ))}
-                  </Picker>
-                </View>
-                <View style={{ display: 'flex', flexDirection: 'row' }}>
-                  <Text style={styles.inputLabel}>Country</Text>
-                  <Picker
-                    style={styles.dropDown}
-                    selectedValue={values.country}
-                    onValueChange={handleChange('country')}
-                    mode="dropdown">
-                    {COUNTRIES.map((item) => (
-                      <Picker.Item key={item.value} label={item.label} value={item.value} />
-                    ))}
-                  </Picker>
-                </View>
-              </View>
+            <View style={{ display: 'flex', alignItems: 'center' }}>
+              <Text style={styles.inputLabel}>Language</Text>
+              <Picker
+                style={styles.dropDown}
+                selectedValue={values.language}
+                onValueChange={handleChange('language')}
+                mode="dropdown">
+                {LANGUAGES.map((item) => (
+                  <Picker.Item key={item.value} label={item.label} value={item.value} />
+                ))}
+              </Picker>
+              <Text style={styles.inputLabel}>Country</Text>
+              <Picker
+                style={styles.dropDown}
+                selectedValue={values.country}
+                onValueChange={handleChange('country')}
+                mode="dropdown">
+                {COUNTRIES.map((item) => (
+                  <Picker.Item key={item.value} label={item.label} value={item.value} />
+                ))}
+              </Picker>
               <Input
                 label="First name"
                 onChangeText={handleChange('firstName')}
@@ -127,6 +98,7 @@ const Signup = ({}: {}) => {
 
               <View>
                 <CheckBox
+                  containerStyle={{ backgroundColor: 'rgba(0,0,0,0.0)' }}
                   title={
                     <View style={{ display: 'flex', flexDirection: 'row' }}>
                       <Text>I agree with the</Text>
@@ -158,10 +130,17 @@ const Signup = ({}: {}) => {
                 containerStyle={{ width: 300, marginBottom: 20 }}
                 color="secondary"
               />
+              <TouchableOpacity
+                onPress={() => navigation.navigate('Introduction')}
+                style={{ marginBottom: 40 }}>
+                <Text style={{ textDecorationLine: 'underline', fontSize: 20 }}>
+                  First time? Click here for an introduction.
+                </Text>
+              </TouchableOpacity>
             </View>
           )}
         </Formik>
-      </View>
+      </ScrollView>
     </KeyboardAvoid>
   );
 };
@@ -177,7 +156,8 @@ const styles = StyleSheet.create({
     width: 200,
     marginVertical: 10,
   },
-  inputLabel: { alignSelf: 'center', marginRight: 10, fontSize: 20 },
+
+  inputLabel: { marginRight: 10, fontSize: 16 },
 });
 
 export default Signup;

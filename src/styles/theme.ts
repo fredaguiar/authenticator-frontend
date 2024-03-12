@@ -16,7 +16,7 @@ export const theme = createTheme({
     Input: {
       inputContainerStyle: {
         backgroundColor: 'white',
-        borderRadius: 20,
+        borderRadius: 10,
         padding: 5,
         borderWidth: 1,
       },

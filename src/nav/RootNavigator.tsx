@@ -2,20 +2,34 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useContext } from 'react';
 import Login from '../components/auth/Login';
 import Signup from '../components/auth/Signup';
-import Home from '../components/auth/Home';
+import Home from '../components/home/Home';
 import { useAuthContext } from '../context/AuthContext';
+import Introduction from '../components/setup/Introduction';
+import ConfirmEmail from '../components/setup/ConfirmEmail';
+import ConfirmMobile from '../components/setup/ConfirmMobile';
 
-export type RootStackParams = {
+export type PublicRootStackParams = {
   Login: undefined;
   Signup: undefined;
+  Introduction: undefined;
+};
+
+export type PrivateRootStackParams = {
   Home: { email: string; name: string };
 };
 
-const RootStack = createNativeStackNavigator<RootStackParams>();
+export type SetupRootStackParams = {
+  ConfirmEmail: undefined;
+  ConfirmMobile: undefined;
+};
 
-const LoginRootStack = () => (
-  <RootStack.Navigator>
-    <RootStack.Screen
+const PublicNativeStackNav = createNativeStackNavigator<PublicRootStackParams>();
+const PrivateNativeStackNav = createNativeStackNavigator<PrivateRootStackParams>();
+const SetupNativeStackNavigator = createNativeStackNavigator<SetupRootStackParams>();
+
+const PublicRootStack = () => (
+  <PublicNativeStackNav.Navigator>
+    <PublicNativeStackNav.Screen
       name="Login"
       component={Login}
       options={{
@@ -24,34 +38,62 @@ const LoginRootStack = () => (
         headerTitleAlign: 'center',
       }}
     />
-    <RootStack.Screen
+    <PublicNativeStackNav.Screen
       name="Signup"
       component={Signup}
       options={{
         headerTintColor: 'black',
-        headerTitle: 'Sign-up',
+        headerTitle: 'Create new profile',
         headerTitleAlign: 'center',
       }}
     />
-  </RootStack.Navigator>
+    <PublicNativeStackNav.Screen name="Introduction" component={Introduction} />
+  </PublicNativeStackNav.Navigator>
 );
 
-const HomeRootStack = () => (
-  <RootStack.Navigator>
-    <RootStack.Screen name="Home" component={Home} />
-  </RootStack.Navigator>
+const PrivateRootStack = () => (
+  <PrivateNativeStackNav.Navigator>
+    <PrivateNativeStackNav.Screen name="Home" component={Home} />
+  </PrivateNativeStackNav.Navigator>
+);
+
+const SetupRootStack = () => (
+  <SetupNativeStackNavigator.Navigator>
+    <SetupNativeStackNavigator.Screen
+      name="ConfirmMobile"
+      component={ConfirmMobile}
+      options={{
+        headerTintColor: 'black',
+        headerTitle: 'Confirm mobile phone number',
+        headerTitleAlign: 'center',
+      }}
+    />
+    <SetupNativeStackNavigator.Screen
+      name="ConfirmEmail"
+      component={ConfirmEmail}
+      options={{
+        headerTintColor: 'black',
+        headerTitle: 'Confirm email',
+        headerTitleAlign: 'center',
+      }}
+    />
+  </SetupNativeStackNavigator.Navigator>
 );
 
 const RootNavigator = () => {
   const authContext = useAuthContext();
 
-  console.log('INNNNNN RootNavigator authContext.user', authContext.user);
+  console.log('RootNavigator authContext.user', authContext.user);
 
-  if (authContext.user?.token) {
-    return <HomeRootStack />;
+  if (!authContext.user?.token) {
+    return <PublicRootStack />;
   }
 
-  return <LoginRootStack />;
+  if (!authContext.user?.mobileVerified) {
+    return <SetupRootStack />;
+  }
+
+  return <PrivateRootStack />;
 };
 
 export default RootNavigator;

@@ -5,15 +5,18 @@ import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import { Formik } from 'formik';
 import GlobalStyles from '../../styles/GlobalStyles';
 import KeyboardAvoid from '../../utils/KeyboardAvoid';
-import { RootStackParams } from '../../nav/RootNavigator';
+import { PublicRootStackParams } from '../../nav/RootNavigator';
 import { useAuthContext } from '../../context/AuthContext';
-
-type LoginNavProp = NavigationProp<RootStackParams>;
+import { useEffect } from 'react';
 
 const Login = ({}: {}) => {
   const { login, loadingLogin, errorLogin, loginGoogle, loadingGoogle, errorGoogle, logout } =
     useAuthContext();
-  const navigation = useNavigation<LoginNavProp>();
+  const navigation = useNavigation<NavigationProp<PublicRootStackParams>>();
+
+  useEffect(() => {
+    logout();
+  });
 
   if (loadingLogin)
     return (

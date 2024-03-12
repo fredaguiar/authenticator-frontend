@@ -1,9 +1,9 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
-import useSecureStore from '../hooks/useSecureStore';
+import * as SecureStore from 'expo-secure-store';
 import { ApolloError, gql, useMutation, useQuery } from '@apollo/client';
 
-const JWT_TOKEN = 'JID';
+export const JWT_TOKEN = 'JID';
 
 const GQL_LOGIN = gql`
   mutation Login($credentials: Credentials!) {
@@ -13,7 +13,9 @@ const GQL_LOGIN = gql`
       language
       country
       email
-      password
+      token
+      emailVerified
+      mobileVerified
     }
   }
 `;
@@ -26,7 +28,24 @@ const GQL_SIGNUP = gql`
       language
       country
       email
-      password
+      token
+      emailVerified
+      mobileVerified
+    }
+  }
+`;
+
+const GQL_CONFIRM_MOBILE = gql`
+  mutation ConfirmMobile($code: Int!) {
+    confirmMobile(code: $code) {
+      firstName
+      lastName
+      language
+      country
+      email
+      token
+      emailVerified
+      mobileVerified
     }
   }
 `;
@@ -40,9 +59,11 @@ type TUser = {
   password?: string;
   token: string;
   type: 'auth' | 'google';
+  emailVerified: boolean;
+  mobileVerified: boolean;
 };
 
-type TSignUp = Omit<TUser, 'type' | 'token'>;
+type TSignUp = Omit<TUser, 'type' | 'token' | 'emailVerified' | 'mobileVerified'>;
 type TCredentials = Pick<TUser, 'email' | 'password'>;
 
 type AuthProps = {
@@ -51,12 +72,15 @@ type AuthProps = {
   signup: (user: TSignUp) => void;
   logout: () => void;
   loginGoogle: () => void;
+  confirmMobile: (code: number) => void;
   loadingLogin: boolean;
   errorLogin: ApolloError | undefined;
   loadingSignup: boolean;
   errorSignUp: ApolloError | undefined;
   loadingGoogle: boolean;
   errorGoogle: any;
+  loadingConfirmMobile: boolean;
+  errorConfirmMobile: any;
 };
 
 const AuthContext = createContext<AuthProps | undefined>(undefined);
@@ -65,7 +89,6 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
   const [user, setUser] = useState<TUser | null>(null);
   const [loadingGoogle, setLoadingGoogle] = useState<boolean>(false);
   const [errorGoogle, setErrorGoogle] = useState<any>(null);
-  const secureStore = useSecureStore();
   GoogleSignin.configure({
     // the webClientId is used to specify the client ID for OAuth 2.0 flows on both Android and iOS platforms (chatGPT)
     webClientId: '479374542478-itb68h17o5tlcf19s8bnt52qd3fqg09b.apps.googleusercontent.com',
@@ -73,8 +96,8 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
 
   const [loginMutation, { loading: loadingLogin, error: errorLogin }] = useMutation(GQL_LOGIN, {
     onCompleted: (data) => {
-      console.log('login COMPLETE. token:', data.login.token);
-      secureStore.setItem(JWT_TOKEN, data.login.token);
+      console.log('login COMPLETE - token', data.login.token);
+      SecureStore.setItemAsync(JWT_TOKEN, data.login.token);
       setUser({ ...data.login, type: 'auth' });
       // TODO: set authorization header
     },
@@ -86,11 +109,19 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
   const [signupMutation, { loading: loadingSignup, error: errorSignUp }] = useMutation(GQL_SIGNUP, {
     onCompleted: (data) => {
       console.log('signupMutation COMPLETE. token:', data.sigupUser);
-      secureStore.setItem(JWT_TOKEN, data.sigupUser.token);
+      SecureStore.setItemAsync(JWT_TOKEN, data.sigupUser.token);
       setUser({ ...data.sigupUser, type: 'auth' });
       // TODO: set authorization header
     },
   });
+
+  const [confirmMobileMutation, { loading: loadingConfirmMobile, error: errorConfirmMobile }] =
+    useMutation(GQL_CONFIRM_MOBILE, {
+      onCompleted: (data) => {
+        console.log('confirmMobileMutation COMPLETE. mobileVerified:', data.confirmMobile);
+        setUser({ ...data.data.confirmMobile, type: 'auth' });
+      },
+    });
 
   const loginGoogle = async () => {
     try {
@@ -111,6 +142,8 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
         language: 'TODO',
         country: 'TODO',
         token: 'TODO',
+        emailVerified: false,
+        mobileVerified: false,
       });
       setLoadingGoogle(false);
     } catch (exceptionGoogle: any) {
@@ -145,6 +178,10 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
     });
   };
 
+  const confirmMobile = (code: number) => {
+    confirmMobileMutation({ variables: { code } });
+  };
+
   const logout = async () => {
     console.log('LOGOUT');
     if (user?.type === 'google') {
@@ -165,6 +202,7 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
         login,
         logout,
         signup,
+        confirmMobile,
         loginGoogle,
         loadingLogin,
         errorLogin,
@@ -172,6 +210,8 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
         errorSignUp,
         loadingGoogle,
         errorGoogle,
+        loadingConfirmMobile,
+        errorConfirmMobile,
       }}>
       {children}
     </AuthContext.Provider>
