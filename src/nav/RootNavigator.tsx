@@ -11,7 +11,6 @@ import ConfirmMobile from '../components/setup/ConfirmMobile';
 export type PublicRootStackParams = {
   Login: undefined;
   Signup: undefined;
-  Introduction: undefined;
 };
 
 export type PrivateRootStackParams = {
@@ -21,6 +20,7 @@ export type PrivateRootStackParams = {
 export type SetupRootStackParams = {
   ConfirmEmail: undefined;
   ConfirmMobile: undefined;
+  Introduction: undefined;
 };
 
 const PublicNativeStackNav = createNativeStackNavigator<PublicRootStackParams>();
@@ -47,7 +47,6 @@ const PublicRootStack = () => (
         headerTitleAlign: 'center',
       }}
     />
-    <PublicNativeStackNav.Screen name="Introduction" component={Introduction} />
   </PublicNativeStackNav.Navigator>
 );
 
@@ -55,29 +54,6 @@ const PrivateRootStack = () => (
   <PrivateNativeStackNav.Navigator>
     <PrivateNativeStackNav.Screen name="Home" component={Home} />
   </PrivateNativeStackNav.Navigator>
-);
-
-const SetupRootStack = () => (
-  <SetupNativeStackNavigator.Navigator>
-    <SetupNativeStackNavigator.Screen
-      name="ConfirmMobile"
-      component={ConfirmMobile}
-      options={{
-        headerTintColor: 'black',
-        headerTitle: 'Confirm mobile phone number',
-        headerTitleAlign: 'center',
-      }}
-    />
-    <SetupNativeStackNavigator.Screen
-      name="ConfirmEmail"
-      component={ConfirmEmail}
-      options={{
-        headerTintColor: 'black',
-        headerTitle: 'Confirm email',
-        headerTitleAlign: 'center',
-      }}
-    />
-  </SetupNativeStackNavigator.Navigator>
 );
 
 const RootNavigator = () => {
@@ -89,9 +65,35 @@ const RootNavigator = () => {
     return <PublicRootStack />;
   }
 
-  if (!authContext.user?.mobileVerified) {
-    return <SetupRootStack />;
-  }
+  if (!authContext.user?.mobileVerified)
+    return (
+      <SetupNativeStackNavigator.Navigator>
+        <SetupNativeStackNavigator.Screen
+          name="ConfirmMobile"
+          component={ConfirmMobile}
+          options={{
+            headerTintColor: 'black',
+            headerTitle: 'Confirm mobile phone number',
+            headerTitleAlign: 'center',
+          }}
+        />
+      </SetupNativeStackNavigator.Navigator>
+    );
+
+  if (!authContext.user?.introductionViewed)
+    return (
+      <SetupNativeStackNavigator.Navigator>
+        <SetupNativeStackNavigator.Screen
+          name="Introduction"
+          component={Introduction}
+          options={{
+            headerTintColor: 'black',
+            headerTitle: 'A brief introduction',
+            headerTitleAlign: 'center',
+          }}
+        />
+      </SetupNativeStackNavigator.Navigator>
+    );
 
   return <PrivateRootStack />;
 };

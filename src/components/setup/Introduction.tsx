@@ -3,12 +3,12 @@ import { useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import Video from 'react-native-video';
-import { RootStackParams } from '../../nav/RootNavigator';
-
-type NavProp = NavigationProp<RootStackParams>;
+import { SetupRootStackParams } from '../../nav/RootNavigator';
+import { useAuthContext } from '../../context/AuthContext';
 
 const Introduction = ({}: {}) => {
-  const navigation = useNavigation<NavProp>();
+  const navigation = useNavigation<NavigationProp<SetupRootStackParams>>();
+  const { confirmMobile, loadingConfirmMobile, errorConfirmMobile } = useAuthContext();
   return (
     <View>
       <Text>A Brief Introduction</Text>

@@ -2,6 +2,7 @@ import { Button, Input, Text, CheckBox } from '@rneui/themed';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { Formik } from 'formik';
+import * as yup from 'yup';
 import KeyboardAvoid from '../../utils/KeyboardAvoid';
 import GlobalStyles from '../../styles/GlobalStyles';
 import { useAuthContext } from '../../context/AuthContext';
@@ -9,6 +10,22 @@ import { useState } from 'react';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { PublicRootStackParams } from '../../nav/RootNavigator';
 import { COUNTRIES, LANGUAGES } from '../../Const';
+
+const validationSchema = yup.object().shape({
+  firstName: yup.string().required('Name is Required'),
+  lastName: yup.string().required('Last name is Required'),
+  phone: yup.string().required('Phone is Required'),
+  phoneCountry: yup.string().required('Required'),
+  email: yup.string().email('Please enter valid email').required('Email is Required'),
+  password: yup
+    .string()
+    .min(8, ({ min }) => `Password must be at least ${min} characters`)
+    .required('Password is required'),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref('password')], 'Passwords do not match')
+    .required('Confirm password is required'),
+});
 
 const Signup = ({}: {}) => {
   const { signup, loadingSignup, errorSignUp } = useAuthContext();
@@ -29,13 +46,17 @@ const Signup = ({}: {}) => {
           {errorSignUp && <Text style={{ color: 'red' }}>Error: {errorSignUp.message}</Text>}
         </View>
         <Formik
+          validationSchema={validationSchema}
           initialValues={{
             firstName: '',
             lastName: '',
             language: 'pt',
             country: 'br',
             email: '',
+            phoneCountry: '',
+            phone: '',
             password: '',
+            confirmPassword: '',
           }}
           onSubmit={(values) => {
             signup({
@@ -44,10 +65,12 @@ const Signup = ({}: {}) => {
               language: values.language,
               country: values.country,
               email: values.email,
+              phoneCountry: values.phoneCountry,
+              phone: values.phone,
               password: values.password,
             });
           }}>
-          {({ handleChange, handleBlur, handleSubmit, values }) => (
+          {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
             <View style={{ display: 'flex', alignItems: 'center' }}>
               <Text style={styles.inputLabel}>Language</Text>
               <Picker
@@ -74,12 +97,14 @@ const Signup = ({}: {}) => {
                 onChangeText={handleChange('firstName')}
                 onBlur={handleBlur('firstName')}
                 value={values.firstName}
+                errorMessage={errors.firstName && touched.firstName ? errors.firstName : undefined}
               />
               <Input
                 label="Last name"
                 onChangeText={handleChange('lastName')}
                 onBlur={handleBlur('lastName')}
                 value={values.lastName}
+                errorMessage={errors.lastName && touched.lastName ? errors.lastName : undefined}
               />
               <Input
                 label="Email"
@@ -87,13 +112,50 @@ const Signup = ({}: {}) => {
                 onBlur={handleBlur('email')}
                 value={values.email}
                 keyboardType="email-address"
+                errorMessage={errors.email && touched.email ? errors.email : undefined}
               />
+              <View style={{ display: 'flex', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 30, fontWeight: '800', alignSelf: 'center' }}>+</Text>
+                <Input
+                  containerStyle={{ width: 90 }}
+                  label="Country"
+                  onChangeText={handleChange('phoneCountry')}
+                  onBlur={handleBlur('phoneCountry')}
+                  value={values.phoneCountry}
+                  keyboardType="phone-pad"
+                  errorMessage={
+                    errors.phoneCountry && touched.phoneCountry ? errors.phoneCountry : undefined
+                  }
+                />
+                <Input
+                  label="Phone"
+                  containerStyle={{ width: 200 }}
+                  onChangeText={handleChange('phone')}
+                  onBlur={handleBlur('phone')}
+                  value={values.phone}
+                  keyboardType="phone-pad"
+                  errorMessage={errors.phone && touched.phone ? errors.phone : undefined}
+                />
+              </View>
               <Input
                 label="Password"
                 onChangeText={handleChange('password')}
                 onBlur={handleBlur('password')}
                 value={values.password}
                 secureTextEntry={true}
+                errorMessage={errors.password && touched.password ? errors.password : undefined}
+              />
+              <Input
+                label="confirmPassword"
+                onChangeText={handleChange('confirmPassword')}
+                onBlur={handleBlur('confirmPassword')}
+                value={values.confirmPassword}
+                secureTextEntry={true}
+                errorMessage={
+                  errors.confirmPassword && touched.confirmPassword
+                    ? errors.confirmPassword
+                    : undefined
+                }
               />
 
               <View>

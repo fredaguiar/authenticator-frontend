@@ -1,22 +1,15 @@
-import { Button, Input, Text } from '@rneui/themed';
-import { useState } from 'react';
-import {
-  NativeSyntheticEvent,
-  StyleSheet,
-  TextInputFocusEventData,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Button, Input, Text, makeStyles } from '@rneui/themed';
+import { TouchableOpacity, View } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import Video from 'react-native-video';
+import * as yup from 'yup';
 import { SetupRootStackParams } from '../../nav/RootNavigator';
 import { useAuthContext } from '../../context/AuthContext';
 import { Formik } from 'formik';
-
-type TCODES = { code1: string; code2: string; code3: string; code4: string; code5: string };
+import GlobalStyles from '../../styles/GlobalStyles';
 
 const ConfirmMobile = ({}: {}) => {
   const { confirmMobile, loadingConfirmMobile, errorConfirmMobile } = useAuthContext();
+  const styles = useStyles();
   const navigation = useNavigation<NavigationProp<SetupRootStackParams>>();
 
   const CODES = { code1: '', code2: '', code3: '', code4: '', code5: '' };
@@ -29,7 +22,8 @@ const ConfirmMobile = ({}: {}) => {
     );
 
   return (
-    <View>
+    <View
+      style={[GlobalStyles.AndroidSafeArea, GlobalStyles.SkyBackground, GlobalStyles.Container]}>
       <Text>
         A number code was sent to your registered PHONE NUMBER via SMS. Please fill the space below
         with that code. The code will be expired in 10 minutes.
@@ -37,30 +31,31 @@ const ConfirmMobile = ({}: {}) => {
       <Formik
         initialValues={{ code1: '', code2: '', code3: '', code4: '', code5: '' }}
         onSubmit={(values) => {
-          console.log(values);
           const codeStr = Object.keys(CODES).map((code) => values[code as keyof typeof CODES]);
           confirmMobile(parseInt(codeStr.join('')));
         }}>
         {({ handleChange, handleBlur, handleSubmit, values }) => (
-          <View>
+          <View style={{ display: 'flex', alignItems: 'center' }}>
             {errorConfirmMobile && (
               <Text style={{ color: 'red' }}>{errorConfirmMobile.message}</Text>
             )}
-
-            {Object.keys(CODES).map((code) => (
-              <Input
-                key={code}
-                style={styles.inputCode}
-                onChangeText={handleChange(code)}
-                onBlur={handleBlur(code)}
-                value={values[code as keyof typeof CODES]}
-                keyboardType="number-pad"
-              />
-            ))}
+            <View style={styles.inputTextView}>
+              {Object.keys(CODES).map((code) => (
+                <Input
+                  key={code}
+                  containerStyle={styles.inputText}
+                  onChangeText={handleChange(code)}
+                  onBlur={handleBlur(code)}
+                  value={values[code as keyof typeof CODES]}
+                  keyboardType="number-pad"
+                  maxLength={1}
+                />
+              ))}
+            </View>
 
             <Button
               onPress={handleSubmit as any}
-              title="Login"
+              title="Confirm"
               containerStyle={{ width: 300, marginBottom: 20 }}
             />
             <TouchableOpacity
@@ -77,11 +72,17 @@ const ConfirmMobile = ({}: {}) => {
   );
 };
 
-const styles = StyleSheet.create({
-  inputCode: {
-    marginTop: 15,
-    width: 100,
+const useStyles = makeStyles((theme, props: {}) => ({
+  inputText: {
+    width: 70,
+    textAlign: 'center',
   },
-});
+  inputTextView: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    marginTop: 20,
+  },
+}));
 
 export default ConfirmMobile;

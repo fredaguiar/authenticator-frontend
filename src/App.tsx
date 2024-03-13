@@ -16,8 +16,6 @@ const httpLink = new HttpLink({
 
 const authLink = setContext(async (_, { headers }) => {
   const token = await SecureStore.getItemAsync(JWT_TOKEN);
-  console.log('headers', headers);
-  console.log('token', token);
   return { headers: { ...headers, authorization: token ? `Bearer ${token}` : '' } };
 });
 

@@ -13,6 +13,8 @@ const GQL_LOGIN = gql`
       language
       country
       email
+      phoneCountry
+      phone
       token
       emailVerified
       mobileVerified
@@ -28,6 +30,8 @@ const GQL_SIGNUP = gql`
       language
       country
       email
+      phoneCountry
+      phone
       token
       emailVerified
       mobileVerified
@@ -43,10 +47,18 @@ const GQL_CONFIRM_MOBILE = gql`
       language
       country
       email
+      phoneCountry
+      phone
       token
       emailVerified
       mobileVerified
     }
+  }
+`;
+
+const GQL_INTRO_VIEWED = gql`
+  mutation IntroViewed($viewed: Boolean!) {
+    introViewed(viewed: $viewed)
   }
 `;
 
@@ -56,11 +68,14 @@ type TUser = {
   language: string;
   country: string;
   email: string;
+  phoneCountry: string;
+  phone: string;
   password?: string;
   token: string;
   type: 'auth' | 'google';
   emailVerified: boolean;
   mobileVerified: boolean;
+  introductionViewed: boolean;
 };
 
 type TSignUp = Omit<TUser, 'type' | 'token' | 'emailVerified' | 'mobileVerified'>;
@@ -73,6 +88,7 @@ type AuthProps = {
   logout: () => void;
   loginGoogle: () => void;
   confirmMobile: (code: number) => void;
+  introViewed: (viewed: boolean) => void;
   loadingLogin: boolean;
   errorLogin: ApolloError | undefined;
   loadingSignup: boolean;
@@ -119,7 +135,15 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
     useMutation(GQL_CONFIRM_MOBILE, {
       onCompleted: (data) => {
         console.log('confirmMobileMutation COMPLETE. mobileVerified:', data.confirmMobile);
-        setUser({ ...data.data.confirmMobile, type: 'auth' });
+        setUser({ ...data.confirmMobile, type: 'auth' });
+      },
+    });
+
+  const [introViewedMutation, { loading: loadingIntroViewed, error: errorIntroViewed }] =
+    useMutation(GQL_CONFIRM_MOBILE, {
+      onCompleted: (data) => {
+        console.log('introViewedMutation COMPLETE:', data.introViewed);
+        setUser({ ...user, introductionViewed: data.introViewed } as TUser);
       },
     });
 
@@ -138,12 +162,15 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
         firstName,
         lastName,
         email,
+        phoneCountry: 'TODO',
+        phone: 'TODO',
         type: 'google',
         language: 'TODO',
         country: 'TODO',
         token: 'TODO',
         emailVerified: false,
         mobileVerified: false,
+        introductionViewed: false,
       });
       setLoadingGoogle(false);
     } catch (exceptionGoogle: any) {
@@ -170,10 +197,19 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
     });
   };
 
-  const signup = ({ firstName, lastName, language, country, email, password }: TSignUp) => {
+  const signup = ({
+    firstName,
+    lastName,
+    language,
+    country,
+    email,
+    phoneCountry,
+    phone,
+    password,
+  }: TSignUp) => {
     signupMutation({
       variables: {
-        userInput: { firstName, lastName, language, country, email, password },
+        userInput: { firstName, lastName, language, country, email, phoneCountry, phone, password },
       },
     });
   };
@@ -182,17 +218,18 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
     confirmMobileMutation({ variables: { code } });
   };
 
+  const introViewed = (viewed: boolean) => {
+    introViewedMutation({ variables: { viewed } });
+  };
+
   const logout = async () => {
     console.log('LOGOUT');
     if (user?.type === 'google') {
-      console.log('LOGOUT google');
       GoogleSignin.revokeAccess();
       GoogleSignin.signOut();
-      console.log('Logout DONE');
     }
-    await secureStore.deleteItem(JWT_TOKEN);
+    await SecureStore.deleteItemAsync(JWT_TOKEN);
     setUser(null);
-    // TODO: set authorization header
   };
 
   return (
