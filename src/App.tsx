@@ -38,7 +38,7 @@ export default function App() {
   );
 }
 
-AppRegistry.registerComponent('authenticator-frontend', () => App);
+AppRegistry.registerComponent('main', () => App);
 
 /* 
 To move App.tsx from ./ to ./src/

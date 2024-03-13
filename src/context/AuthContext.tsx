@@ -18,6 +18,7 @@ const GQL_LOGIN = gql`
       token
       emailVerified
       mobileVerified
+      introductionViewed
     }
   }
 `;
@@ -35,6 +36,7 @@ const GQL_SIGNUP = gql`
       token
       emailVerified
       mobileVerified
+      introductionViewed
     }
   }
 `;
@@ -75,7 +77,7 @@ type TUser = {
   type: 'auth' | 'google';
   emailVerified: boolean;
   mobileVerified: boolean;
-  introductionViewed: boolean;
+  introductionViewed?: boolean;
 };
 
 type TSignUp = Omit<TUser, 'type' | 'token' | 'emailVerified' | 'mobileVerified'>;
@@ -97,6 +99,8 @@ type AuthProps = {
   errorGoogle: any;
   loadingConfirmMobile: boolean;
   errorConfirmMobile: any;
+  loadingIntroViewed: boolean;
+  errorIntroViewed: any;
 };
 
 const AuthContext = createContext<AuthProps | undefined>(undefined);
@@ -129,6 +133,9 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
       setUser({ ...data.sigupUser, type: 'auth' });
       // TODO: set authorization header
     },
+    onError(error) {
+      console.log('signupMutation ERROR:', error.stack);
+    },
   });
 
   const [confirmMobileMutation, { loading: loadingConfirmMobile, error: errorConfirmMobile }] =
@@ -140,7 +147,7 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
     });
 
   const [introViewedMutation, { loading: loadingIntroViewed, error: errorIntroViewed }] =
-    useMutation(GQL_CONFIRM_MOBILE, {
+    useMutation(GQL_INTRO_VIEWED, {
       onCompleted: (data) => {
         console.log('introViewedMutation COMPLETE:', data.introViewed);
         setUser({ ...user, introductionViewed: data.introViewed } as TUser);
@@ -152,9 +159,7 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
       setErrorGoogle(null);
       setLoadingGoogle(true);
       await GoogleSignin.hasPlayServices();
-      console.log('11111111 loginGoogle Before GoogleSignin.signIn');
       const gUser = await GoogleSignin.signIn();
-      console.log('GOOGLE YES!!!', gUser?.user?.name);
       let { name: firstName, email, familyName: lastName } = gUser?.user;
       firstName = firstName ?? '';
       lastName = firstName ?? '';
@@ -174,7 +179,6 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
       });
       setLoadingGoogle(false);
     } catch (exceptionGoogle: any) {
-      console.log('ERRRR GOOGLE', JSON.stringify(exceptionGoogle));
       setLoadingGoogle(false);
       setErrorGoogle(exceptionGoogle.message);
     }
@@ -241,6 +245,7 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
         signup,
         confirmMobile,
         loginGoogle,
+        introViewed,
         loadingLogin,
         errorLogin,
         loadingSignup,
@@ -249,6 +254,8 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
         errorGoogle,
         loadingConfirmMobile,
         errorConfirmMobile,
+        loadingIntroViewed,
+        errorIntroViewed,
       }}>
       {children}
     </AuthContext.Provider>

@@ -1,33 +1,40 @@
-import { Button, Text } from '@rneui/themed';
-import { useState } from 'react';
+import { Text } from '@rneui/themed';
 import { TouchableOpacity, View } from 'react-native';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
-import Video from 'react-native-video';
-import { SetupRootStackParams } from '../../nav/RootNavigator';
+import { Video, ResizeMode } from 'expo-av';
 import { useAuthContext } from '../../context/AuthContext';
+import { useRef, useState } from 'react';
 
 const Introduction = ({}: {}) => {
-  const navigation = useNavigation<NavigationProp<SetupRootStackParams>>();
-  const { confirmMobile, loadingConfirmMobile, errorConfirmMobile } = useAuthContext();
+  const { introViewed, loadingIntroViewed, errorIntroViewed } = useAuthContext();
+  const video = useRef<Video>(null);
+  const [status, setStatus] = useState<any>({});
+
+  if (loadingIntroViewed)
+    return (
+      <View>
+        <Text>Loading...</Text>
+      </View>
+    );
+
   return (
     <View>
-      <Text>A Brief Introduction</Text>
-      <View>
-        {/* <Video
+      <View style={{ display: 'flex', alignItems: 'center' }}>
+        {errorIntroViewed && <Text style={{ color: 'red' }}>{errorIntroViewed.message}</Text>}
+        <Video
+          ref={video}
+          style={{ width: 300, height: 300 }}
           source={{
-            uri: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+            uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',
           }}
-          controls={true}
-          resizeMode="cover"
-          hideShutterView={true}
-          paused={true}
-        /> */}
+          useNativeControls
+          resizeMode={ResizeMode.CONTAIN}
+          isLooping
+          onPlaybackStatusUpdate={(status) => setStatus(() => status)}
+        />
+        <TouchableOpacity onPress={() => introViewed(true)} style={{ marginBottom: 40 }}>
+          <Text style={{ textDecorationLine: 'underline', fontSize: 20 }}>Skip/Continue</Text>
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity
-        onPress={() => navigation.navigate('Introduction')}
-        style={{ marginBottom: 40 }}>
-        <Text style={{ textDecorationLine: 'underline', fontSize: 20 }}>Skip/Continue</Text>
-      </TouchableOpacity>
     </View>
   );
 };

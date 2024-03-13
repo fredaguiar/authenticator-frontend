@@ -1,4 +1,4 @@
-import { Button, Text, Input, Divider } from '@rneui/themed';
+import { Button, Text, Input } from '@rneui/themed';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { GoogleSigninButton } from '@react-native-google-signin/google-signin';

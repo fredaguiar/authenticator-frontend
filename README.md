@@ -23,3 +23,10 @@ Solution:
 
 - Android Studio / Virtual Device Manager / Wipe data / cold boot
 - npm run android
+
+---
+
+ApolloError: Network request failed
+The localhost IP has changed.
+
+Solution Update the IP .env file: EXPO_PUBLIC_APOLLO_SERVER_URI=http://{IP}:4000/graphql
