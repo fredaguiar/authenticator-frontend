@@ -11,13 +11,18 @@ export const theme = createTheme({
     Button: {
       radius: 20,
       color: 'primary',
-      titleStyle: { fontWeight: 'bold', fontSize: 23 },
+      titleStyle: { fontWeight: 'bold', fontSize: 20 },
+    },
+    Text: {
+      style: {
+        fontSize: 20,
+      },
     },
     Input: {
       inputContainerStyle: {
         backgroundColor: 'white',
-        borderRadius: 10,
-        padding: 5,
+        borderRadius: 5,
+        padding: 2,
         borderWidth: 1,
       },
     },

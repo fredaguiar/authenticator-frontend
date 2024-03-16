@@ -1,11 +1,10 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React, { useContext } from 'react';
+import React from 'react';
 import Login from '../components/auth/Login';
 import Signup from '../components/auth/Signup';
 import Home from '../components/home/Home';
 import { useAuthContext } from '../context/AuthContext';
 import Introduction from '../components/setup/Introduction';
-import ConfirmEmail from '../components/setup/ConfirmEmail';
 import ConfirmMobile from '../components/setup/ConfirmMobile';
 
 export type PublicRootStackParams = {
@@ -15,6 +14,7 @@ export type PublicRootStackParams = {
 
 export type PrivateRootStackParams = {
   Home: { email: string; name: string };
+  Tab: undefined;
 };
 
 export type SetupRootStackParams = {

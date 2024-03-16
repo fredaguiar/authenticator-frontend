@@ -9,3 +9,9 @@ export const COUNTRIES = [
   { label: 'United States', value: 'us' },
   { label: 'Mexico', value: 'mx' },
 ];
+
+export const SORT_SAFE_BY = [
+  { label: 'Sort by date (ascending)', value: 'asc' },
+  { label: 'Sort by date (desc)', value: 'desc' },
+  { label: 'Sort by name', value: 'name' },
+];

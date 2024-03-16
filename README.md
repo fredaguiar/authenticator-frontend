@@ -6,6 +6,10 @@ A **React Native** delivery mobile app
 
 - npm run start
 
+## Icons
+
+- list of icons: [https://oblador.github.io/react-native-vector-icons/](https://oblador.github.io/react-native-vector-icons/)
+
 ## Troubleshooting
 
 CommandError: No development build (com.fredaguiar.authenticatorfrontend) for this project is installed. Please make and install a development build on the device first

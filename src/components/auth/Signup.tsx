@@ -192,9 +192,7 @@ const Signup = ({}: {}) => {
                 containerStyle={{ width: 300, marginBottom: 20 }}
                 color="secondary"
               />
-              <TouchableOpacity
-                onPress={() => navigation.navigate('Introduction')}
-                style={{ marginBottom: 40 }}>
+              <TouchableOpacity onPress={() => {}} style={{ marginBottom: 40 }}>
                 <Text style={{ textDecorationLine: 'underline', fontSize: 20 }}>
                   First time? Click here for an introduction.
                 </Text>

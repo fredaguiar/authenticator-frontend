@@ -184,13 +184,16 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
     }
   };
 
-  // TODO: automatic login
-  // useEffect(() => {
-  //   const reloadToken = () => {
-  //     const storedToken = secureStore.setItem(JWT_TOKEN);
-  //   };
-  //   reloadToken();
-  // }, []);
+  useEffect(() => {
+    const automaticLogin = () => {
+      loginMutation({
+        variables: {
+          credentials: { email: 'a@gmail.com', password: '11111111' },
+        },
+      });
+    };
+    automaticLogin();
+  }, []);
 
   const login = ({ email, password }: TCredentials) => {
     console.log('LOGIN', email, password);
