@@ -186,6 +186,7 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
 
   useEffect(() => {
     const automaticLogin = () => {
+      console.log('Automatic LOGIN');
       loginMutation({
         variables: {
           credentials: { email: 'a@gmail.com', password: '11111111' },

@@ -18,4 +18,15 @@ const SafeItem = ({ safeName }: { safeName: string }) => {
   );
 };
 
-export default SafeItem;
+const SafeList = () => {
+  return (
+    <View>
+      <SafeItem safeName="BFF dd" />
+      <SafeItem safeName="Family" />
+      <SafeItem safeName="Personal documents. Year 2025 and 2026" />
+      <SafeItem safeName="Work LAST" />
+    </View>
+  );
+};
+
+export default SafeList;

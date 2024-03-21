@@ -3,6 +3,7 @@ import React from 'react';
 import Login from '../components/auth/Login';
 import Signup from '../components/auth/Signup';
 import Home from '../components/home/Home';
+import CreateSafe from '../components/safe/CreateSafe';
 import { useAuthContext } from '../context/AuthContext';
 import Introduction from '../components/setup/Introduction';
 import ConfirmMobile from '../components/setup/ConfirmMobile';
@@ -13,7 +14,8 @@ export type PublicRootStackParams = {
 };
 
 export type PrivateRootStackParams = {
-  Home: { email: string; name: string };
+  Home: undefined;
+  CreateSafe: undefined;
   Tab: undefined;
 };
 
@@ -53,6 +55,7 @@ const PublicRootStack = () => (
 const PrivateRootStack = () => (
   <PrivateNativeStackNav.Navigator>
     <PrivateNativeStackNav.Screen name="Home" component={Home} />
+    <PrivateNativeStackNav.Screen name="CreateSafe" component={CreateSafe} />
   </PrivateNativeStackNav.Navigator>
 );
 
