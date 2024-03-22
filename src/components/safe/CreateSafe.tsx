@@ -1,18 +1,19 @@
 import { View, Text, StyleSheet } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Button, Divider, Input } from '@rneui/themed';
+import { Divider, Input } from '@rneui/themed';
 import * as yup from 'yup';
 import LifeCheck from '../header/LifeCheck';
 import { Formik } from 'formik';
-import { useState } from 'react';
-import { IconButton, IconButtonsSaveCancel } from '../ui/IconButtons';
+import { IconButtonsSaveCancel } from '../ui/IconButtons';
+import useCreateNewSafe from '../../hooks/useCreateNewSafe';
 
 const validationSchema = yup.object().shape({
   name: yup.string().required('Name is Required'),
 });
 
 const CreateSafe = ({}: {}) => {
-  const [name, setName] = useState(false);
+  const { createNewSafe, loading, error } = useCreateNewSafe();
+
   return (
     <View style={styles.container}>
       <View style={styles.containerHeader}>
@@ -30,7 +31,9 @@ const CreateSafe = ({}: {}) => {
           <Formik
             validationSchema={validationSchema}
             initialValues={{ name: '' }}
-            onSubmit={(values) => {}}>
+            onSubmit={async (values) => {
+              // await createNewSafe(values.name);
+            }}>
             {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
               <View style={{ display: 'flex', alignItems: 'center' }}>
                 <Input
@@ -41,7 +44,12 @@ const CreateSafe = ({}: {}) => {
                   value={values.name}
                   errorMessage={errors.name && touched.name ? errors.name : undefined}
                 />
-                <IconButtonsSaveCancel onPressSave={handleSubmit as any} onPressCancel={() => {}} />
+                {/* {error && <Text style={{ color: 'red' }}>{error.message}</Text>} */}
+                <IconButtonsSaveCancel
+                  onPressSave={handleSubmit as any}
+                  onPressCancel={() => {}}
+                  loading={loading}
+                />
               </View>
             )}
           </Formik>

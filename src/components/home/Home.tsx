@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import { Divider } from '@rneui/themed';
-import SafeList from './SafeList';
+import SafeList from '../safe/SafeList';
 import Bottom from '../bottom/Bottom';
 import LifeCheck from '../header/LifeCheck';
 import SearchFiles from '../header/SearchFiles';
@@ -14,9 +14,9 @@ const Home = () => {
         <SearchFiles />
       </View>
       <Divider style={{ borderWidth: 1, borderColor: 'gray' }} />
-      <ScrollView style={[styles.containerScrollView, { backgroundColor: 'white' }]}>
+      <View style={[styles.containerScrollView, { backgroundColor: 'white' }]}>
         <SafeList />
-      </ScrollView>
+      </View>
       <Bottom />
     </View>
   );

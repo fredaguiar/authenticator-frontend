@@ -19,7 +19,7 @@ const validationSchema = yup.object().shape({
 });
 
 const Login = ({}: {}) => {
-  const { login, loadingLogin, errorLogin, loginGoogle, loadingGoogle, errorGoogle, logout, user } =
+  const { login, loadingLogin, errorLogin, loginGoogle, loadingGoogle, errorGoogle, logout } =
     useAuthContext();
   const navigation = useNavigation<NavigationProp<PublicRootStackParams>>();
 

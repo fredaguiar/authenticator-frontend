@@ -1,12 +1,16 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
+import { View } from 'react-native';
 import Login from '../components/auth/Login';
 import Signup from '../components/auth/Signup';
 import Home from '../components/home/Home';
 import CreateSafe from '../components/safe/CreateSafe';
-import { useAuthContext } from '../context/AuthContext';
+import { TUser, useAuthContext } from '../context/AuthContext';
 import Introduction from '../components/setup/Introduction';
 import ConfirmMobile from '../components/setup/ConfirmMobile';
+import { gql, useQuery } from '@apollo/client';
+import { Text } from '@rneui/themed';
+import { LOCAL_GET_USER_PROFILE, LOCAL_IS_LOGGED_IN, userProfileVar } from '../cache';
 
 export type PublicRootStackParams = {
   Login: undefined;
@@ -60,15 +64,17 @@ const PrivateRootStack = () => (
 );
 
 const RootNavigator = () => {
-  const authContext = useAuthContext();
+  const { data } = useQuery<{ userProfile: TUser } | undefined>(LOCAL_GET_USER_PROFILE);
+  // const user = userProfileVar();
+  const user = data?.userProfile;
 
-  console.log('RootNavigator authContext.user', authContext.user);
+  console.log('RootNavigator>>>>>>>>>>>>>>>>>> ', user);
 
-  if (!authContext.user?.token) {
+  if (!user) {
     return <PublicRootStack />;
   }
 
-  if (!authContext.user?.mobileVerified)
+  if (!user.mobileVerified)
     return (
       <SetupNativeStackNavigator.Navigator>
         <SetupNativeStackNavigator.Screen
@@ -83,7 +89,7 @@ const RootNavigator = () => {
       </SetupNativeStackNavigator.Navigator>
     );
 
-  if (!authContext.user?.introductionViewed)
+  if (!user.introductionViewed)
     return (
       <SetupNativeStackNavigator.Navigator>
         <SetupNativeStackNavigator.Screen

@@ -68,6 +68,7 @@ const Signup = ({}: {}) => {
               phoneCountry: values.phoneCountry,
               phone: values.phone,
               password: values.password,
+              safes: [],
             });
           }}>
           {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (

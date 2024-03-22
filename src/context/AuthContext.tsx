@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import * as SecureStore from 'expo-secure-store';
 import { ApolloError, gql, useMutation, useQuery } from '@apollo/client';
+import { LOCAL_GET_USER_PROFILE, isLoggedInVar, userProfileVar } from '../cache';
+import { client } from '../App';
 
 export const JWT_TOKEN = 'JID';
 
@@ -19,6 +21,10 @@ const GQL_LOGIN = gql`
       emailVerified
       mobileVerified
       introductionViewed
+      safes {
+        name
+        _id
+      }
     }
   }
 `;
@@ -37,6 +43,10 @@ const GQL_SIGNUP = gql`
       emailVerified
       mobileVerified
       introductionViewed
+      safes {
+        name
+        _id
+      }
     }
   }
 `;
@@ -54,6 +64,10 @@ const GQL_CONFIRM_MOBILE = gql`
       token
       emailVerified
       mobileVerified
+      safes {
+        name
+        _id
+      }
     }
   }
 `;
@@ -63,6 +77,11 @@ const GQL_INTRO_VIEWED = gql`
     introViewed(viewed: $viewed)
   }
 `;
+
+type TSafe = {
+  name: string;
+  _id: string;
+};
 
 type TUser = {
   firstName: string;
@@ -78,13 +97,14 @@ type TUser = {
   emailVerified: boolean;
   mobileVerified: boolean;
   introductionViewed?: boolean;
+  safes: TSafe[];
 };
 
 type TSignUp = Omit<TUser, 'type' | 'token' | 'emailVerified' | 'mobileVerified'>;
 type TCredentials = Pick<TUser, 'email' | 'password'>;
 
 type AuthProps = {
-  user: TUser | null;
+  // user: TUser | null;
   login: (credentials: TCredentials) => void;
   signup: (user: TSignUp) => void;
   logout: () => void;
@@ -106,7 +126,7 @@ type AuthProps = {
 const AuthContext = createContext<AuthProps | undefined>(undefined);
 
 const AuthProvider = ({ children }: { children: JSX.Element }) => {
-  const [user, setUser] = useState<TUser | null>(null);
+  // const [user, setUser] = useState<TUser | null>(null);
   const [loadingGoogle, setLoadingGoogle] = useState<boolean>(false);
   const [errorGoogle, setErrorGoogle] = useState<any>(null);
   GoogleSignin.configure({
@@ -118,11 +138,11 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
     onCompleted: (data) => {
       console.log('login COMPLETE - token', data.login.token);
       SecureStore.setItemAsync(JWT_TOKEN, data.login.token);
-      setUser({ ...data.login, type: 'auth' });
-      // TODO: set authorization header
+      userProfileVar({ ...data.login, type: 'auth' });
+      // setUser({ ...data.login, type: 'auth' });
     },
     onError(error) {
-      console.log('LOGIN ERROR:', error.message);
+      console.log('LOGIN ERROR:', error.stack);
     },
   });
 
@@ -130,8 +150,8 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
     onCompleted: (data) => {
       console.log('signupMutation COMPLETE. token:', data.sigupUser);
       SecureStore.setItemAsync(JWT_TOKEN, data.sigupUser.token);
-      setUser({ ...data.sigupUser, type: 'auth' });
-      // TODO: set authorization header
+      userProfileVar({ ...data.sigupUser, type: 'auth' });
+      // setUser({ ...data.sigupUser, type: 'auth' });
     },
     onError(error) {
       console.log('signupMutation ERROR:', error.stack);
@@ -142,7 +162,8 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
     useMutation(GQL_CONFIRM_MOBILE, {
       onCompleted: (data) => {
         console.log('confirmMobileMutation COMPLETE. mobileVerified:', data.confirmMobile);
-        setUser({ ...data.confirmMobile, type: 'auth' });
+        userProfileVar({ ...data.confirmMobile, type: 'auth' });
+        // setUser({ ...data.confirmMobile, type: 'auth' });
       },
     });
 
@@ -150,7 +171,9 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
     useMutation(GQL_INTRO_VIEWED, {
       onCompleted: (data) => {
         console.log('introViewedMutation COMPLETE:', data.introViewed);
-        setUser({ ...user, introductionViewed: data.introViewed } as TUser);
+        const { data: dataUser } = useQuery(LOCAL_GET_USER_PROFILE);
+        userProfileVar({ ...dataUser, introductionViewed: data.introViewed } as TUser);
+        // setUser({ ...user, introductionViewed: data.introViewed } as TUser);
       },
     });
 
@@ -163,7 +186,7 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
       let { name: firstName, email, familyName: lastName } = gUser?.user;
       firstName = firstName ?? '';
       lastName = firstName ?? '';
-      setUser({
+      userProfileVar({
         firstName,
         lastName,
         email,
@@ -176,6 +199,7 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
         emailVerified: false,
         mobileVerified: false,
         introductionViewed: false,
+        safes: [],
       });
       setLoadingGoogle(false);
     } catch (exceptionGoogle: any) {
@@ -193,7 +217,7 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
         },
       });
     };
-    automaticLogin();
+    // automaticLogin();
   }, []);
 
   const login = ({ email, password }: TCredentials) => {
@@ -232,18 +256,20 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
 
   const logout = async () => {
     console.log('LOGOUT');
-    if (user?.type === 'google') {
+    const { data: dataUser } = useQuery(LOCAL_GET_USER_PROFILE);
+    if (dataUser?.type === 'google') {
       GoogleSignin.revokeAccess();
       GoogleSignin.signOut();
     }
+
     await SecureStore.deleteItemAsync(JWT_TOKEN);
-    setUser(null);
+    // client.cache.evict({ fieldName: 'me' }); TODO
+    client.cache.gc();
   };
 
   return (
     <AuthContext.Provider
       value={{
-        user,
         login,
         logout,
         signup,

@@ -1,5 +1,5 @@
 import { Text } from '@rneui/themed';
-import { TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, TouchableOpacity, View } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 type TIconButton = 'save' | 'cancel';
@@ -19,11 +19,13 @@ const IconButton = ({
   onPress,
   style,
   disabled,
+  loading,
   type,
 }: {
   onPress?: () => void;
   style?: object;
   disabled?: boolean;
+  loading?: boolean;
   type: TIconButton;
 }) => {
   return (
@@ -33,7 +35,7 @@ const IconButton = ({
           name={iconButtonMap[type].iconName}
           size={50}
           style={style}
-          disabled={disabled}
+          disabled={disabled || loading}
         />
         <Text>{iconButtonMap[type].label}</Text>
       </View>
@@ -45,11 +47,13 @@ const IconButtonsSaveCancel = ({
   onPressSave,
   onPressCancel,
   disabled,
+  loading,
 }: {
   onPressSave?: () => void;
   onPressCancel?: () => void;
   style?: object;
   disabled?: boolean;
+  loading?: boolean;
 }) => {
   return (
     <View
@@ -59,8 +63,8 @@ const IconButtonsSaveCancel = ({
         justifyContent: 'space-around',
         width: '100%',
       }}>
-      <IconButton onPress={onPressCancel} type="cancel" />
-      <IconButton onPress={onPressSave} disabled={disabled} type="save" />
+      <IconButton onPress={onPressCancel} disabled={disabled || loading} type="cancel" />
+      <IconButton onPress={onPressSave} disabled={disabled || loading} type="save" />
     </View>
   );
 };

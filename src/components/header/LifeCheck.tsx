@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Switch } from '@rneui/themed';
-import { useAuthContext } from '../../context/AuthContext';
+import { userProfileVar } from '../../cache';
 
 const LifeCheck = () => {
-  const { user } = useAuthContext();
   const [lifeCheck, setLifeCheck] = useState(false);
+  const user = userProfileVar();
 
   return (
     <View

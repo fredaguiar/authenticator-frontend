@@ -1,6 +1,7 @@
-import { View } from 'react-native';
+import { FlatList, View } from 'react-native';
 import { Text } from '@rneui/themed';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { userProfileVar } from '../../cache';
 
 const SafeItem = ({ safeName }: { safeName: string }) => {
   return (
@@ -19,12 +20,15 @@ const SafeItem = ({ safeName }: { safeName: string }) => {
 };
 
 const SafeList = () => {
+  const user = userProfileVar();
+
   return (
     <View>
-      <SafeItem safeName="BFF dd" />
-      <SafeItem safeName="Family" />
-      <SafeItem safeName="Personal documents. Year 2025 and 2026" />
-      <SafeItem safeName="Work LAST" />
+      <FlatList
+        data={user?.safes}
+        renderItem={({ item }) => <SafeItem safeName={item.name} />}
+        keyExtractor={(item) => item._id}
+      />
     </View>
   );
 };

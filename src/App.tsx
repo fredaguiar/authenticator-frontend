@@ -1,5 +1,5 @@
 import { AppRegistry } from 'react-native';
-import { ApolloClient, InMemoryCache, ApolloProvider, HttpLink } from '@apollo/client';
+import { ApolloClient, ApolloProvider, HttpLink, gql } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { NavigationContainer } from '@react-navigation/native';
 import { registerRootComponent } from 'expo';
@@ -8,6 +8,13 @@ import { theme } from './styles/theme';
 import * as SecureStore from 'expo-secure-store';
 import RootNavigator from './nav/RootNavigator';
 import { AuthProvider, JWT_TOKEN } from './context/AuthContext';
+import { cache } from './cache';
+
+export const typeDefs = gql`
+  extend type Query {
+    isLoggedIn: Boolean!
+  }
+`;
 
 const httpLink = new HttpLink({
   uri: process.env.EXPO_PUBLIC_APOLLO_SERVER_URI, // localhost won't work
@@ -19,9 +26,10 @@ const authLink = setContext(async (_, { headers }) => {
   return { headers: { ...headers, authorization: token ? `Bearer ${token}` : '' } };
 });
 
-const client = new ApolloClient({
+export const client = new ApolloClient({
   link: authLink.concat(httpLink),
-  cache: new InMemoryCache(),
+  cache: cache,
+  typeDefs,
 });
 
 export default function App() {
