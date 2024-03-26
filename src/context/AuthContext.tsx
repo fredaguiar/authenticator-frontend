@@ -217,7 +217,7 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
         },
       });
     };
-    // automaticLogin();
+    automaticLogin();
   }, []);
 
   const login = ({ email, password }: TCredentials) => {
@@ -300,4 +300,4 @@ const useAuthContext = (): AuthProps => {
   return context;
 };
 
-export { AuthProvider, useAuthContext, TUser, TSignUp, TCredentials };
+export { AuthProvider, useAuthContext, TUser, TSignUp, TCredentials, TSafe };

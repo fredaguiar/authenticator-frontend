@@ -1,4 +1,5 @@
 import { FlatList, View } from 'react-native';
+import { useReactiveVar } from '@apollo/client';
 import { Text } from '@rneui/themed';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { userProfileVar } from '../../cache';
@@ -20,7 +21,7 @@ const SafeItem = ({ safeName }: { safeName: string }) => {
 };
 
 const SafeList = () => {
-  const user = userProfileVar();
+  const user = useReactiveVar(userProfileVar);
 
   return (
     <View>

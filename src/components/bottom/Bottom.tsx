@@ -3,11 +3,17 @@ import { Button, Text, makeStyles } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { PrivateRootStackParams } from '../../nav/RootNavigator';
+import { TItemType } from '../safe/AddItemModal';
 
 const Bottom = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<PrivateRootStackParams, 'CreateSafe'>>();
   const styles = useStyles({});
+
+  const goTo = (itemType: TItemType) => {
+    navigation.navigate('AddItemModal', { safeId: undefined, itemType });
+  };
+
   return (
     <View style={styles.container}>
       <View
@@ -32,9 +38,9 @@ const Bottom = () => {
           justifyContent: 'space-between',
           paddingHorizontal: 5,
         }}>
-        <ButtonAddItem onPress={() => {}} title="Photo" />
-        <ButtonAddItem onPress={() => {}} title="Video" />
-        <ButtonAddItem onPress={() => {}} title="Audio" />
+        <ButtonAddItem onPress={() => goTo('photo')} title="Photo" />
+        <ButtonAddItem onPress={() => goTo('video')} title="Video" />
+        <ButtonAddItem onPress={() => goTo('audio')} title="Audio" />
       </View>
       <View
         style={{
@@ -44,9 +50,9 @@ const Bottom = () => {
           justifyContent: 'space-between',
           paddingHorizontal: 5,
         }}>
-        <ButtonAddItem onPress={() => {}} title="Text" />
-        <ButtonAddItem onPress={() => {}} title="File" />
-        <ButtonAddItem onPress={() => {}} title="Password" />
+        <ButtonAddItem onPress={() => goTo('text')} title="Text" />
+        <ButtonAddItem onPress={() => goTo('file')} title="File" />
+        <ButtonAddItem onPress={() => goTo('password')} title="Password" />
       </View>
     </View>
   );

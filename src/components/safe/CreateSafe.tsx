@@ -2,10 +2,12 @@ import { View, Text, StyleSheet } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Divider, Input } from '@rneui/themed';
 import * as yup from 'yup';
+
 import LifeCheck from '../header/LifeCheck';
 import { Formik } from 'formik';
 import { IconButtonsSaveCancel } from '../ui/IconButtons';
 import useCreateNewSafe from '../../hooks/useCreateNewSafe';
+import { useNavigation } from '@react-navigation/native';
 
 const validationSchema = yup.object().shape({
   name: yup.string().required('Name is Required'),
@@ -13,6 +15,7 @@ const validationSchema = yup.object().shape({
 
 const CreateSafe = ({}: {}) => {
   const { createNewSafe, loading, error } = useCreateNewSafe();
+  const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
@@ -31,8 +34,8 @@ const CreateSafe = ({}: {}) => {
           <Formik
             validationSchema={validationSchema}
             initialValues={{ name: '' }}
-            onSubmit={async (values) => {
-              // await createNewSafe(values.name);
+            onSubmit={(values) => {
+              createNewSafe(values.name);
             }}>
             {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
               <View style={{ display: 'flex', alignItems: 'center' }}>
@@ -44,10 +47,12 @@ const CreateSafe = ({}: {}) => {
                   value={values.name}
                   errorMessage={errors.name && touched.name ? errors.name : undefined}
                 />
-                {/* {error && <Text style={{ color: 'red' }}>{error.message}</Text>} */}
+                {error && <Text style={{ color: 'red' }}>{error.message}</Text>}
                 <IconButtonsSaveCancel
                   onPressSave={handleSubmit as any}
-                  onPressCancel={() => {}}
+                  onPressCancel={() => {
+                    navigation.goBack();
+                  }}
                   loading={loading}
                 />
               </View>
