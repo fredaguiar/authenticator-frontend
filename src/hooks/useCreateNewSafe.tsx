@@ -1,6 +1,6 @@
 import { gql, useMutation } from '@apollo/client';
 import { useNavigation } from '@react-navigation/native';
-import { userProfileVar } from '../cache';
+import { safeIdVar, userProfileVar } from '../cache';
 import { TSafe, TUser } from '../context/AuthContext';
 
 const GQL_CREATE_SAFE = gql`
@@ -17,8 +17,9 @@ const useCreateNewSafe = () => {
   const [createSafeMutation, { loading, error }] = useMutation(GQL_CREATE_SAFE, {
     onCompleted: (data: { createSafe: TSafe }) => {
       console.log('createSafeMutation COMPLETE:', data.createSafe);
-      const curr = userProfileVar() as TUser;
-      userProfileVar({ ...curr, safes: [...curr.safes, ...[data.createSafe]] });
+      const currUser = userProfileVar() as TUser;
+      userProfileVar({ ...currUser, safes: [...currUser.safes, ...[data.createSafe]] });
+      safeIdVar(data.createSafe._id);
       navigation.goBack();
     },
   });

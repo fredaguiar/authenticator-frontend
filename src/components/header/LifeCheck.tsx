@@ -16,6 +16,7 @@ const LifeCheck = () => {
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: 4,
+          backgroundColor: 'rgb(197, 197, 197)',
         },
       ]}>
       <Text

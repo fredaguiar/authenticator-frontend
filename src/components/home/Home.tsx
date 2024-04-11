@@ -5,8 +5,15 @@ import SafeList from '../safe/SafeList';
 import Bottom from '../bottom/Bottom';
 import LifeCheck from '../header/LifeCheck';
 import SearchFiles from '../header/SearchFiles';
+import { useReactiveVar } from '@apollo/client';
+import { SafeUtil } from '../../utils/SafeUtil';
+import { safeIdVar, userProfileVar } from '../../cache';
+import ItemList from '../safe/ItemList';
 
 const Home = () => {
+  const user = useReactiveVar(userProfileVar);
+  const safe = SafeUtil.getSafe(user, useReactiveVar(safeIdVar));
+
   return (
     <View style={styles.container}>
       <View style={styles.containerHeader}>
@@ -15,7 +22,7 @@ const Home = () => {
       </View>
       <Divider style={{ borderWidth: 1, borderColor: 'gray' }} />
       <View style={[styles.containerScrollView, { backgroundColor: 'white' }]}>
-        <SafeList />
+        {!safe ? <SafeList /> : <ItemList />}
       </View>
       <Bottom />
     </View>

@@ -80,6 +80,13 @@ const GQL_INTRO_VIEWED = gql`
 
 type TSafe = {
   name: string;
+  items: TITem[];
+  _id: string;
+};
+
+export type TITem = {
+  name: string;
+  type: string;
   _id: string;
 };
 

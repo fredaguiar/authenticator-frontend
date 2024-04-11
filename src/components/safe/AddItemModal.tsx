@@ -1,12 +1,13 @@
 import { View, Text, StyleSheet } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Button, Divider } from '@rneui/themed';
-import { userProfileVar } from '../../cache';
+import { Button } from '@rneui/themed';
+import { safeIdVar, userProfileVar } from '../../cache';
 import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
 import { useReactiveVar } from '@apollo/client';
-import { useState } from 'react';
 import { PrivateRootStackParams } from '../../nav/RootNavigator';
+import { capitalizeFirstLetter } from '../../utils/StringUtil';
+import useImportPhoto from '../../hooks/useImportPhoto';
 
 export type TItemType = 'photo' | 'video' | 'audio' | 'text' | 'file' | 'password';
 type TItemTypeValues = { label: string; iconName: string };
@@ -39,17 +40,20 @@ const TItemTypeMap: Record<TItemType, TItemTypeValues> = {
 
 const AddItemModal = ({}: {}) => {
   const {
-    params: { safeId, itemType },
+    params: { itemType },
   } = useRoute<RouteProp<PrivateRootStackParams, 'AddItemModal'>>();
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
   const user = useReactiveVar(userProfileVar);
-  const [selectedSafeId, setSelectedSafeId] = useState<string | undefined>(safeId);
+  const safeId = useReactiveVar(safeIdVar);
+  const { loadingPhoto, errorPhoto, importPhoto } = useImportPhoto();
 
   const { label, iconName } = TItemTypeMap[itemType];
+  navigation.setOptions({
+    title: capitalizeFirstLetter(label),
+  });
 
   return (
     <View style={styles.container}>
-      <Divider style={{ borderWidth: 1, borderColor: 'gray' }} />
       <View
         style={{
           display: 'flex',
@@ -73,9 +77,9 @@ const AddItemModal = ({}: {}) => {
           <Text style={{ fontSize: 20 }}>Destination safe</Text>
           <Picker
             style={styles.dropDown}
-            selectedValue={selectedSafeId}
+            selectedValue={safeId}
             onValueChange={(val: string) => {
-              setSelectedSafeId(val);
+              safeIdVar(val);
             }}
             mode="dropdown">
             {user?.safes.map((item) => (
@@ -89,7 +93,18 @@ const AddItemModal = ({}: {}) => {
             alignItems: 'center',
             marginBottom: 20,
           }}>
-          <ButtonImport onPress={() => {}} title="Import from phone" />
+          <ButtonImport
+            onPress={() => {
+              importPhoto();
+            }}
+            title="Import from phone"
+          />
+          <ButtonImport
+            onPress={() => {
+              navigation.navigate('TakePicture');
+            }}
+            title="Take picture"
+          />
         </View>
 
         <View style={{ alignItems: 'center' }}>
@@ -100,12 +115,6 @@ const AddItemModal = ({}: {}) => {
               navigation.goBack();
             }}
           />
-          <Text style={{ fontSize: 20 }}>Close</Text>
-          <Text style={{ fontSize: 20 }}>Close</Text>
-          <Text style={{ fontSize: 20 }}>Close</Text>
-          <Text style={{ fontSize: 20 }}>Close</Text>
-          <Text style={{ fontSize: 20 }}>Close</Text>
-          <Text style={{ fontSize: 20 }}>Close</Text>
         </View>
       </View>
     </View>

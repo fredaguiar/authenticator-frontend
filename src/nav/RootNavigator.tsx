@@ -10,6 +10,8 @@ import ConfirmMobile from '../components/setup/ConfirmMobile';
 import { useQuery } from '@apollo/client';
 import { LOCAL_GET_USER_PROFILE } from '../cache';
 import AddItemModal, { TItemType } from '../components/safe/AddItemModal';
+import TakePicture from '../components/safe/photo/TakePicture';
+import ImportPhoto from '../hooks/useImportPhoto';
 
 export type PublicRootStackParams = {
   Login: undefined;
@@ -19,7 +21,8 @@ export type PublicRootStackParams = {
 export type PrivateRootStackParams = {
   Home: undefined;
   CreateSafe: undefined;
-  AddItemModal: { safeId?: string; itemType: TItemType };
+  AddItemModal: { itemType: TItemType };
+  TakePicture: undefined;
   Tab: undefined;
 };
 
@@ -63,8 +66,14 @@ const PrivateRootStack = () => (
     <PrivateNativeStackNav.Screen
       name="AddItemModal"
       component={AddItemModal}
-      options={{ presentation: 'modal' }}
+      options={{
+        presentation: 'modal',
+        headerTitleAlign: 'center',
+      }}
     />
+    <PrivateNativeStackNav.Group screenOptions={{ presentation: 'modal' }}>
+      <PrivateNativeStackNav.Screen name="TakePicture" component={TakePicture} />
+    </PrivateNativeStackNav.Group>
   </PrivateNativeStackNav.Navigator>
 );
 

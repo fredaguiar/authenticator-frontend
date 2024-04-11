@@ -11,7 +11,7 @@ const Bottom = () => {
   const styles = useStyles({});
 
   const goTo = (itemType: TItemType) => {
-    navigation.navigate('AddItemModal', { safeId: undefined, itemType });
+    navigation.navigate('AddItemModal', { itemType });
   };
 
   return (
