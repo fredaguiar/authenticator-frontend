@@ -11,35 +11,7 @@ import useImportItem from '../../hooks/useImportItem';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import SpinnerUI from '../ui/SpinnerUI';
 import { useEffect } from 'react';
-
-export type TItemType = 'photo' | 'video' | 'audio' | 'text' | 'file' | 'password';
-type TItemTypeValues = { label: string; iconName: string };
-const TItemTypeMap: Record<TItemType, TItemTypeValues> = {
-  photo: {
-    label: 'photo',
-    iconName: 'camera',
-  },
-  video: {
-    label: 'video',
-    iconName: 'video-box',
-  },
-  audio: {
-    label: 'audio',
-    iconName: 'microphone',
-  },
-  text: {
-    label: 'text',
-    iconName: 'text-box-outline',
-  },
-  file: {
-    label: 'file',
-    iconName: 'file-outline',
-  },
-  password: {
-    label: 'password',
-    iconName: 'key-outline',
-  },
-};
+import { TItemTypeMap } from '../../typing';
 
 const AddItemModal = ({}: {}) => {
   const {
@@ -51,16 +23,15 @@ const AddItemModal = ({}: {}) => {
   const { importItem, data, loadingItem, errorItem } = useImportItem();
 
   const { label, iconName } = TItemTypeMap[itemType];
-  navigation.setOptions({
-    title: capitalizeFirstLetter(label),
-  });
 
   useEffect(() => {
-    console.log('AddItemModal useEffect:', data);
+    navigation.setOptions({
+      title: capitalizeFirstLetter(label),
+    });
     if (!safeId && user?.safes && user?.safes.length > 0) {
       safeIdVar(user.safes[0]._id);
     }
-    // if (data) navigation.navigate('Home');
+    if (data) navigation.navigate('Home');
   }, [data]);
 
   if (loadingItem) return <SpinnerUI />;
@@ -75,7 +46,6 @@ const AddItemModal = ({}: {}) => {
           alignItems: 'center',
           marginTop: 20,
         }}>
-        <Text style={{ fontSize: 20 }}>DATA: {data?.name}</Text>
         <MaterialCommunityIcons
           name={iconName}
           size={50}

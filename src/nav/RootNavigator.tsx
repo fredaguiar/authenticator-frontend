@@ -9,8 +9,9 @@ import Introduction from '../components/setup/Introduction';
 import ConfirmMobile from '../components/setup/ConfirmMobile';
 import { useQuery } from '@apollo/client';
 import { LOCAL_GET_USER_PROFILE } from '../cache';
-import AddItemModal, { TItemType } from '../components/safe/AddItemModal';
+import AddItemModal from '../components/safe/AddItemModal';
 import TakePicture from '../components/safe/photo/TakePicture';
+import { TItemType } from '../typing';
 
 export type PublicRootStackParams = {
   Login: undefined;

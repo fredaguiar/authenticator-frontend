@@ -4,7 +4,8 @@ import { Text } from '@rneui/themed';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { safeIdVar, userProfileVar } from '../../cache';
 import { SafeUtil } from '../../utils/SafeUtil';
-import { TITem, TUser } from '../../context/AuthContext';
+import { TITem } from '../../context/AuthContext';
+import { FileTypeUtil } from '../../utils/FileTypeUtil';
 
 const Item = ({ item }: { item: TITem }) => {
   return (
@@ -15,10 +16,12 @@ const Item = ({ item }: { item: TITem }) => {
         flexDirection: 'row',
         alignItems: 'center',
       }}>
-      <MaterialCommunityIcons name="file-document-outline" size={50} style={{ marginRight: 5 }} />
-      <Text style={{ width: 250 }}>
-        {item.name} - {item.type}
-      </Text>
+      <MaterialCommunityIcons
+        name={FileTypeUtil.getFileTypeIcon(item.type)}
+        size={50}
+        style={{ marginRight: 5 }}
+      />
+      <Text style={{ width: 250 }}>{item.name}</Text>
       <MaterialCommunityIcons name="dots-vertical" size={50} style={{ alignSelf: 'flex-end' }} />
     </View>
   );
@@ -27,6 +30,8 @@ const Item = ({ item }: { item: TITem }) => {
 const ItemList = () => {
   const user = useReactiveVar(userProfileVar);
   const safe = SafeUtil.getSafe(user, useReactiveVar(safeIdVar));
+
+  console.log('ItemList items:', safe?.name, safe?.items);
 
   return (
     <View>

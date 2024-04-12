@@ -24,6 +24,11 @@ const GQL_LOGIN = gql`
       safes {
         name
         _id
+        items {
+          name
+          type
+          _id
+        }
       }
     }
   }

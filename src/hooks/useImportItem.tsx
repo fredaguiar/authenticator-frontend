@@ -1,5 +1,4 @@
 import { gql, useMutation, useReactiveVar } from '@apollo/client';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
 import {
   launchImageLibrary,
@@ -32,7 +31,6 @@ const ALLOWED_IMAGE_TYPES = [
 const useImportItem = () => {
   const [errorItem, setErrorItem] = useState<string | undefined>();
   const [data, setData] = useState<TITem>();
-  const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
   const currUser = useReactiveVar(userProfileVar);
   const safeId = useReactiveVar(safeIdVar);
 
@@ -40,21 +38,20 @@ const useImportItem = () => {
     onCompleted: (data: { addItem: TITem }) => {
       console.log('addItemMutation COMPLETE:', data.addItem);
 
-      // if (!currUser || currUser.safes.length === 0) {
-      //   setErrorItem('Safe not found');
-      //   return;
-      // }
+      if (!currUser || currUser.safes.length === 0) {
+        setErrorItem('Safe not found');
+        return;
+      }
 
-      // const updatedSafes = currUser.safes.map((safe: TSafe) => {
-      //   if (safe._id === safeId) {
-      //     return { ...safe, items: [...safe.items, ...[data.addItem]] };
-      //   }
-      //   return safe;
-      // });
+      const updatedSafes = currUser.safes.map((safe: TSafe) => {
+        if (safe._id === safeId) {
+          return { ...safe, items: [...safe.items, ...[data.addItem]] };
+        }
+        return safe;
+      });
 
-      // userProfileVar({ ...currUser, safes: updatedSafes });
+      userProfileVar({ ...currUser, safes: updatedSafes });
       setData(data.addItem);
-      // navigation.navigate('Home');
     },
     onError(error) {
       setErrorItem(`Server error: ${error.message}`);
