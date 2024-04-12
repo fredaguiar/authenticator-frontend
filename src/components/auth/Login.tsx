@@ -9,6 +9,8 @@ import KeyboardAvoid from '../../utils/KeyboardAvoid';
 import { PublicRootStackParams } from '../../nav/RootNavigator';
 import { useAuthContext } from '../../context/AuthContext';
 import { useEffect } from 'react';
+import ErrorMessageUI from '../ui/ErrorMessageUI';
+import SpinnerUI from '../ui/SpinnerUI';
 
 const validationSchema = yup.object().shape({
   email: yup.string().email('Please enter valid email').required('Email Address is Required'),
@@ -27,12 +29,7 @@ const Login = ({}: {}) => {
     // logout();
   });
 
-  if (loadingLogin)
-    return (
-      <View>
-        <Text>Loading...</Text>
-      </View>
-    );
+  if (loadingLogin) return <SpinnerUI />;
 
   return (
     <KeyboardAvoid>
@@ -67,8 +64,7 @@ const Login = ({}: {}) => {
                 secureTextEntry={true}
                 errorMessage={errors.password && touched.password ? errors.password : undefined}
               />
-              {errorLogin && <Text style={{ color: 'red' }}>{errorLogin.message}</Text>}
-
+              <ErrorMessageUI display={errorLogin} message={errorLogin?.message} />
               <View style={{ display: 'flex', alignItems: 'center' }}>
                 <Button
                   onPress={handleSubmit as any}
@@ -83,11 +79,7 @@ const Login = ({}: {}) => {
                   </Text>
                 </TouchableOpacity>
 
-                {errorGoogle && (
-                  <Text style={{ color: 'red' }}>
-                    Google authentication error: {errorGoogle.message}
-                  </Text>
-                )}
+                <ErrorMessageUI display={errorGoogle} message={errorGoogle?.message} />
                 <GoogleSigninButton
                   size={GoogleSigninButton.Size.Standard}
                   color={GoogleSigninButton.Color.Dark}

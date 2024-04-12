@@ -6,6 +6,9 @@ import { SetupRootStackParams } from '../../nav/RootNavigator';
 import { useAuthContext } from '../../context/AuthContext';
 import { Formik } from 'formik';
 import GlobalStyles from '../../styles/GlobalStyles';
+import ErrorMessage from '../ui/ErrorMessageUI';
+import ErrorMessageUI from '../ui/ErrorMessageUI';
+import SpinnerUI from '../ui/SpinnerUI';
 
 const ConfirmMobile = ({}: {}) => {
   const { confirmMobile, loadingConfirmMobile, errorConfirmMobile } = useAuthContext();
@@ -14,12 +17,7 @@ const ConfirmMobile = ({}: {}) => {
 
   const CODES = { code1: '', code2: '', code3: '', code4: '', code5: '' };
 
-  if (loadingConfirmMobile)
-    return (
-      <View>
-        <Text>Loading...</Text>
-      </View>
-    );
+  if (loadingConfirmMobile) return <SpinnerUI />;
 
   return (
     <View
@@ -36,9 +34,7 @@ const ConfirmMobile = ({}: {}) => {
         }}>
         {({ handleChange, handleBlur, handleSubmit, values }) => (
           <View style={{ display: 'flex', alignItems: 'center' }}>
-            {errorConfirmMobile && (
-              <Text style={{ color: 'red' }}>{errorConfirmMobile.message}</Text>
-            )}
+            <ErrorMessageUI display={errorConfirmMobile} message={errorConfirmMobile.message} />
             <View style={styles.inputTextView}>
               {Object.keys(CODES).map((code) => (
                 <Input

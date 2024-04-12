@@ -11,7 +11,6 @@ import { useQuery } from '@apollo/client';
 import { LOCAL_GET_USER_PROFILE } from '../cache';
 import AddItemModal, { TItemType } from '../components/safe/AddItemModal';
 import TakePicture from '../components/safe/photo/TakePicture';
-import ImportPhoto from '../hooks/useImportPhoto';
 
 export type PublicRootStackParams = {
   Login: undefined;
@@ -61,7 +60,13 @@ const PublicRootStack = () => (
 
 const PrivateRootStack = () => (
   <PrivateNativeStackNav.Navigator>
-    <PrivateNativeStackNav.Screen name="Home" component={Home} />
+    <PrivateNativeStackNav.Screen
+      name="Home"
+      component={Home}
+      options={{
+        headerTitleAlign: 'center',
+      }}
+    />
     <PrivateNativeStackNav.Screen name="CreateSafe" component={CreateSafe} />
     <PrivateNativeStackNav.Screen
       name="AddItemModal"
@@ -71,9 +76,6 @@ const PrivateRootStack = () => (
         headerTitleAlign: 'center',
       }}
     />
-    <PrivateNativeStackNav.Group screenOptions={{ presentation: 'modal' }}>
-      <PrivateNativeStackNav.Screen name="TakePicture" component={TakePicture} />
-    </PrivateNativeStackNav.Group>
   </PrivateNativeStackNav.Navigator>
 );
 

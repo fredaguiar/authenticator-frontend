@@ -3,7 +3,7 @@ import { TSafe, TUser } from './context/AuthContext';
 
 export const isLoggedInVar = makeVar<boolean>(false);
 export const userProfileVar = makeVar<TUser | null>(null);
-export const safeIdVar = makeVar<string | undefined>(null);
+export const safeIdVar = makeVar<string | null>(null);
 
 export const LOCAL_IS_LOGGED_IN = gql`
   query IsUserLoggedIn {

@@ -9,6 +9,7 @@ import {
 } from 'react-native-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import ErrorMessageUI from '../../ui/ErrorMessageUI';
 
 const TakePicture = () => {
   const [imagePickerResponse, setImagePickerResponse] = useState<ImagePickerResponse | null>(null);
@@ -82,7 +83,7 @@ const TakePicture = () => {
   console.log('imageUri', imageUri);
   return (
     <View style={styles.container}>
-      {error && <Text style={{ color: 'red' }}>{error}</Text>}
+      <ErrorMessageUI display={error} message={error || undefined} />
       <SafeAreaView>
         <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
           <CameraButton onPress={onImageGalleryPress} type="gallery" />

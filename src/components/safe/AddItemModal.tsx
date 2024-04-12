@@ -7,7 +7,10 @@ import { Picker } from '@react-native-picker/picker';
 import { useReactiveVar } from '@apollo/client';
 import { PrivateRootStackParams } from '../../nav/RootNavigator';
 import { capitalizeFirstLetter } from '../../utils/StringUtil';
-import useImportPhoto from '../../hooks/useImportPhoto';
+import useImportItem from '../../hooks/useImportItem';
+import ErrorMessageUI from '../ui/ErrorMessageUI';
+import SpinnerUI from '../ui/SpinnerUI';
+import { useEffect } from 'react';
 
 export type TItemType = 'photo' | 'video' | 'audio' | 'text' | 'file' | 'password';
 type TItemTypeValues = { label: string; iconName: string };
@@ -45,12 +48,24 @@ const AddItemModal = ({}: {}) => {
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
   const user = useReactiveVar(userProfileVar);
   const safeId = useReactiveVar(safeIdVar);
-  const { loadingPhoto, errorPhoto, importPhoto } = useImportPhoto();
+  const { importItem, data, loadingItem, errorItem } = useImportItem();
 
   const { label, iconName } = TItemTypeMap[itemType];
   navigation.setOptions({
     title: capitalizeFirstLetter(label),
   });
+
+  useEffect(() => {
+    console.log('AddItemModal useEffect:', data);
+    if (!safeId && user?.safes && user?.safes.length > 0) {
+      safeIdVar(user.safes[0]._id);
+    }
+    // if (data) navigation.navigate('Home');
+  }, [data]);
+
+  if (loadingItem) return <SpinnerUI />;
+
+  console.log('AddItemModal safeId:', safeId);
 
   return (
     <View style={styles.container}>
@@ -60,6 +75,7 @@ const AddItemModal = ({}: {}) => {
           alignItems: 'center',
           marginTop: 20,
         }}>
+        <Text style={{ fontSize: 20 }}>DATA: {data?.name}</Text>
         <MaterialCommunityIcons
           name={iconName}
           size={50}
@@ -77,7 +93,7 @@ const AddItemModal = ({}: {}) => {
           <Text style={{ fontSize: 20 }}>Destination safe</Text>
           <Picker
             style={styles.dropDown}
-            selectedValue={safeId}
+            selectedValue={safeId || undefined}
             onValueChange={(val: string) => {
               safeIdVar(val);
             }}
@@ -93,9 +109,10 @@ const AddItemModal = ({}: {}) => {
             alignItems: 'center',
             marginBottom: 20,
           }}>
+          <ErrorMessageUI display={errorItem} message={errorItem} />
           <ButtonImport
             onPress={() => {
-              importPhoto();
+              importItem();
             }}
             title="Import from phone"
           />

@@ -8,6 +8,7 @@ import { Formik } from 'formik';
 import { IconButtonsSaveCancel } from '../ui/IconButtons';
 import useCreateNewSafe from '../../hooks/useCreateNewSafe';
 import { useNavigation } from '@react-navigation/native';
+import ErrorMessageUI from '../ui/ErrorMessageUI';
 
 const validationSchema = yup.object().shape({
   name: yup.string().required('Name is Required'),
@@ -47,7 +48,7 @@ const CreateSafe = ({}: {}) => {
                   value={values.name}
                   errorMessage={errors.name && touched.name ? errors.name : undefined}
                 />
-                {error && <Text style={{ color: 'red' }}>{error.message}</Text>}
+                <ErrorMessageUI display={error} message={error?.message} />
                 <IconButtonsSaveCancel
                   onPressSave={handleSubmit as any}
                   onPressCancel={() => {

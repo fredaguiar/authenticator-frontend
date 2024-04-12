@@ -10,6 +10,8 @@ import { useState } from 'react';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { PublicRootStackParams } from '../../nav/RootNavigator';
 import { COUNTRIES, LANGUAGES } from '../../Const';
+import ErrorMessageUI from '../ui/ErrorMessageUI';
+import SpinnerUI from '../ui/SpinnerUI';
 
 const validationSchema = yup.object().shape({
   firstName: yup.string().required('Name is Required'),
@@ -32,18 +34,13 @@ const Signup = ({}: {}) => {
   const [terms, setTerms] = useState(false);
   const navigation = useNavigation<NavigationProp<PublicRootStackParams>>();
 
-  if (loadingSignup)
-    return (
-      <View>
-        <Text>Loading...</Text>
-      </View>
-    );
+  if (loadingSignup) return <SpinnerUI />;
 
   return (
     <KeyboardAvoid>
       <ScrollView style={[GlobalStyles.AndroidSafeArea, GlobalStyles.SkyBackground]}>
         <View>
-          {errorSignUp && <Text style={{ color: 'red' }}>Error: {errorSignUp.message}</Text>}
+          <ErrorMessageUI display={errorSignUp} message={errorSignUp?.message} />
         </View>
         <Formik
           validationSchema={validationSchema}
