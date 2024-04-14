@@ -11,18 +11,18 @@ const Item = ({ item }: { item: TITem }) => {
   return (
     <View
       style={{
-        alignSelf: 'center',
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#cccccc',
       }}>
       <MaterialCommunityIcons
         name={FileTypeUtil.getFileTypeIcon(item.type)}
         size={50}
-        style={{ marginRight: 5 }}
+        style={{ marginHorizontal: 5 }}
       />
-      <Text style={{ width: 250 }}>{item.name}</Text>
-      <MaterialCommunityIcons name="dots-vertical" size={50} style={{ alignSelf: 'flex-end' }} />
+      <Text style={{ flexGrow: 1 }}>{item.name}</Text>
     </View>
   );
 };

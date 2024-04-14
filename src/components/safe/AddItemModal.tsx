@@ -89,7 +89,7 @@ const AddItemModal = ({}: {}) => {
           />
           <ButtonImport
             onPress={() => {
-              navigation.navigate('TakePicture');
+              importItem();
             }}
             title="Take picture"
           />

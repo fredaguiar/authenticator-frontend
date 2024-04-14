@@ -10,8 +10,8 @@ import ConfirmMobile from '../components/setup/ConfirmMobile';
 import { useQuery } from '@apollo/client';
 import { LOCAL_GET_USER_PROFILE } from '../cache';
 import AddItemModal from '../components/safe/AddItemModal';
-import TakePicture from '../components/safe/photo/TakePicture';
 import { TItemType } from '../typing';
+import SafeOption from '../components/safe/SafeOption';
 
 export type PublicRootStackParams = {
   Login: undefined;
@@ -21,8 +21,8 @@ export type PublicRootStackParams = {
 export type PrivateRootStackParams = {
   Home: undefined;
   CreateSafe: undefined;
+  SafeOption: { safeId: string };
   AddItemModal: { itemType: TItemType };
-  TakePicture: undefined;
   Tab: undefined;
 };
 
@@ -65,6 +65,15 @@ const PrivateRootStack = () => (
       name="Home"
       component={Home}
       options={{
+        headerTitleAlign: 'center',
+      }}
+    />
+    <PrivateNativeStackNav.Screen
+      name="SafeOption"
+      component={SafeOption}
+      options={{
+        headerTintColor: 'black',
+        headerTitle: 'Safe options',
         headerTitleAlign: 'center',
       }}
     />

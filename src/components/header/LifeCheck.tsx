@@ -36,8 +36,8 @@ const LifeCheck = () => {
         </Text>
         <View style={[{ display: 'flex', flexDirection: 'row' }]}>
           <Switch
-            trackColor={{ false: '#767577', true: 'coral' }}
-            thumbColor={lifeCheck ? 'red' : '#f4f3f4'}
+            trackColor={{ false: '#767577', true: '#767577' }}
+            thumbColor={lifeCheck ? '#00ff00' : '#f4f3f4'}
             value={lifeCheck}
             onValueChange={() => setLifeCheck((val) => !val)}
           />

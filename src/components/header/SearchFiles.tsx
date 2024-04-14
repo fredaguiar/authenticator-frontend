@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Input } from '@rneui/themed';
+import { Input, SearchBar } from '@rneui/themed';
 import { Picker } from '@react-native-picker/picker';
 import { SORT_SAFE_BY } from '../../Const';
 import { useReactiveVar } from '@apollo/client';
@@ -16,6 +16,12 @@ const SearchFiles = () => {
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
   const user = useReactiveVar(userProfileVar);
   const safe = SafeUtil.getSafe(user, useReactiveVar(safeIdVar));
+
+  const updateSearch = (search: string) => {
+    // setSearch(search);
+    // const filtered = data.filter(item => item.name.toLowerCase().includes(search.toLowerCase()));
+    // setFilteredData(filtered);
+  };
 
   return (
     <View style={[{ paddingTop: 10 }]}>
@@ -38,14 +44,27 @@ const SearchFiles = () => {
             }}
           />
         )}
-        <Input
-          style={{}}
+        <SearchBar
           onChangeText={setSearch}
           value={search}
           placeholder="Search on files"
-          keyboardType="ascii-capable"
-          containerStyle={{ width: 350, maxHeight: 55 }}
-          leftIcon={<MaterialCommunityIcons name="archive-search-outline" size={30} style={{}} />}
+          containerStyle={{
+            width: 350,
+            maxHeight: 65,
+            backgroundColor: 'white',
+            borderRadius: 10,
+            borderColor: '#cccccc',
+            borderWidth: 1,
+          }}
+          style={{
+            backgroundColor: 'white',
+            fontSize: 22,
+            color: 'black',
+            textDecorationLine: 'none',
+            borderBottomWidth: 0,
+          }}
+          inputContainerStyle={{ backgroundColor: 'white' }}
+          lightTheme
         />
       </View>
       {!safe && (
