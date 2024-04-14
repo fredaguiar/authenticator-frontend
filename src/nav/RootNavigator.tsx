@@ -85,7 +85,7 @@ const RootNavigator = () => {
   // const user = userProfileVar();
   const user = data?.userProfile;
 
-  console.log('RootNavigator>>>>>>>>>>>>>>>>>> ', user);
+  console.log('RootNavigator>>>>>>>>>>>>>>>>>> ', user?.firstName);
 
   if (!user) {
     return <PublicRootStack />;

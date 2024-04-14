@@ -37,6 +37,7 @@ const AddItemModal = ({}: {}) => {
   if (loadingItem) return <SpinnerUI />;
 
   console.log('AddItemModal safeId:', safeId);
+  console.log('AddItemModal errorItem:', errorItem);
 
   return (
     <View style={styles.container}>

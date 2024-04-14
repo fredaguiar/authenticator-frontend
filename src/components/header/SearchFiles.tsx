@@ -1,36 +1,53 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Button, Input } from '@rneui/themed';
+import { Input } from '@rneui/themed';
 import { Picker } from '@react-native-picker/picker';
 import { SORT_SAFE_BY } from '../../Const';
 import { useReactiveVar } from '@apollo/client';
 import { safeIdVar, userProfileVar } from '../../cache';
 import { SafeUtil } from '../../utils/SafeUtil';
-import { IconButton } from '../ui/IconButtons';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { PrivateRootStackParams } from '../../nav/RootNavigator';
 
 const SearchFiles = () => {
   const [search, setSearch] = useState('');
   const [sortSafe, setSortSafe] = useState('');
-
+  const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
   const user = useReactiveVar(userProfileVar);
   const safe = SafeUtil.getSafe(user, useReactiveVar(safeIdVar));
 
   return (
     <View style={[{ paddingTop: 10 }]}>
-      <Input
-        onChangeText={setSearch}
-        value={search}
-        placeholder="Search on files"
-        keyboardType="ascii-capable"
-        leftIcon={
+      <View
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-evenly',
+          paddingHorizontal: 5,
+          marginVertical: 20,
+        }}>
+        {safe && (
           <MaterialCommunityIcons
-            name="archive-search-outline"
-            size={30}
-            style={{ marginHorizontal: 5 }}
+            name="arrow-left-bold"
+            size={40}
+            style={{}}
+            onPress={() => {
+              safeIdVar(null);
+            }}
           />
-        }
-      />
+        )}
+        <Input
+          style={{}}
+          onChangeText={setSearch}
+          value={search}
+          placeholder="Search on files"
+          keyboardType="ascii-capable"
+          containerStyle={{ width: 350, maxHeight: 55 }}
+          leftIcon={<MaterialCommunityIcons name="archive-search-outline" size={30} style={{}} />}
+        />
+      </View>
       {!safe && (
         <View
           style={{

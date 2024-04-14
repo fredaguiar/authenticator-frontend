@@ -5,9 +5,9 @@ import {
   ImagePickerResponse,
   ImageLibraryOptions,
 } from 'react-native-image-picker';
+// import { pick } from 'react-native-document-picker';
 import { safeIdVar, userProfileVar } from '../cache';
 import { TITem, TSafe } from '../context/AuthContext';
-import { PrivateRootStackParams } from '../nav/RootNavigator';
 
 const GQL_ADD_ITEM = gql`
   mutation AddItem($itemInput: ItemInput!) {
@@ -27,6 +27,17 @@ const ALLOWED_IMAGE_TYPES = [
   'image/jpeg',
   'image/jpeg',
 ];
+
+// try {
+//   const response = await pick({
+//     presentationStyle: 'fullScreen',
+//     type: [types.allFiles],
+//   });
+
+//   response.forEach((resp) => console.log('PICKED FILE', resp.name));
+// } catch (err) {
+//   console.warn(err);
+// }
 
 const useImportItem = () => {
   const [errorItem, setErrorItem] = useState<string | undefined>();
@@ -54,7 +65,7 @@ const useImportItem = () => {
       setData(data.addItem);
     },
     onError(error) {
-      setErrorItem(`Server error: ${error.message}`);
+      setErrorItem(error.message);
     },
   });
 
@@ -85,7 +96,7 @@ const useImportItem = () => {
       const { base64, fileName, type } = asset;
       console.log('fileName, type, safeId', fileName, type, safeId);
       addItemMutation({
-        variables: { itemInput: { name: fileName, type, safeId } },
+        variables: { itemInput: { name: fileName, type, safeId, content: 'base64' } },
       });
     });
   };
