@@ -12,6 +12,7 @@ import { LOCAL_GET_USER_PROFILE } from '../cache';
 import AddItemModal from '../components/safe/AddItemModal';
 import { TItemType } from '../typing';
 import SafeOption from '../components/safe/SafeOption';
+import AutoSharingSetup from '../components/safe/AutoSharingSetup';
 
 export type PublicRootStackParams = {
   Login: undefined;
@@ -22,6 +23,7 @@ export type PrivateRootStackParams = {
   Home: undefined;
   CreateSafe: undefined;
   SafeOption: { safeId: string };
+  AutoSharingSetup: { safeId: string };
   AddItemModal: { itemType: TItemType };
   Tab: undefined;
 };
@@ -74,6 +76,15 @@ const PrivateRootStack = () => (
       options={{
         headerTintColor: 'black',
         headerTitle: 'Safe options',
+        headerTitleAlign: 'center',
+      }}
+    />
+    <PrivateNativeStackNav.Screen
+      name="AutoSharingSetup"
+      component={AutoSharingSetup}
+      options={{
+        headerTintColor: 'black',
+        headerTitle: 'Auto sharing setup',
         headerTitleAlign: 'center',
       }}
     />

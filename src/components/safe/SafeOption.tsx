@@ -4,7 +4,7 @@ import { Button, Switch, Text } from '@rneui/themed';
 import * as yup from 'yup';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { safeIdVar, userProfileVar } from '../../cache';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { PrivateRootStackParams } from '../../nav/RootNavigator';
 import { Picker } from '@react-native-picker/picker';
 import { useState } from 'react';
@@ -12,6 +12,7 @@ import { IconButtonsSaveCancel } from '../ui/IconButtons';
 import { Formik } from 'formik';
 import useUpdateSafeOptions from '../../hooks/useUpdateSafeOptions';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
+import StorageUsage from '../ui/StorageUsage';
 // import useUpdateSafeOptions from '../../hooks/useUpdateSafeOptions';
 
 const validationSchema = yup.object().shape({});
@@ -25,7 +26,7 @@ const SafeOption = () => {
   const [description, setDescription] = useState('');
   const [selectedSafeId, setSelectedSafeId] = useState(safeId);
   const { updateSafeOptions, loading, error } = useUpdateSafeOptions();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
 
   return (
     <View style={styles.container}>
@@ -74,7 +75,11 @@ const SafeOption = () => {
                 {autoSharing ? 'On' : 'Off'}
               </Text>
             </View>
-            <TouchableOpacity onPress={() => {}} style={{ marginBottom: 20 }}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('AutoSharingSetup', { safeId });
+              }}
+              style={{ marginBottom: 20 }}>
               <View
                 style={{
                   display: 'flex',
@@ -127,6 +132,7 @@ const SafeOption = () => {
                 loading={loading}
               />
             </View>
+            <StorageUsage totalStorageInMB={10000} usedStorageInMB={2000} />
           </View>
         )}
       </Formik>

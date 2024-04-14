@@ -55,6 +55,8 @@ const SearchFiles = () => {
             borderRadius: 10,
             borderColor: '#cccccc',
             borderWidth: 1,
+            borderTopWidth: 0,
+            borderBottomWidth: 0,
           }}
           style={{
             backgroundColor: 'white',
@@ -64,7 +66,6 @@ const SearchFiles = () => {
             borderBottomWidth: 0,
           }}
           inputContainerStyle={{ backgroundColor: 'white' }}
-          lightTheme
         />
       </View>
       {!safe && (
@@ -101,7 +102,11 @@ const SearchFiles = () => {
           <MaterialCommunityIcons name="treasure-chest" size={50} style={{ marginRight: 5 }} />
           <Text style={{ marginRight: 20, fontSize: 20 }}>{safe.name}</Text>
           <View style={{}}>
-            <TouchableOpacity onPress={() => {}} style={{}}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('AutoSharingSetup', { safeId: safe._id });
+              }}
+              style={{}}>
               <View
                 style={{
                   display: 'flex',
