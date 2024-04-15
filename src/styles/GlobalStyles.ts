@@ -16,4 +16,8 @@ export default StyleSheet.create({
   Container: {
     paddingHorizontal: 10,
   },
+  Picker: {
+    backgroundColor: 'white',
+    height: 65,
+  },
 });

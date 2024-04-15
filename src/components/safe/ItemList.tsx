@@ -1,6 +1,6 @@
 import { FlatList, View } from 'react-native';
 import { useReactiveVar } from '@apollo/client';
-import { Text } from '@rneui/themed';
+import { Text, useTheme } from '@rneui/themed';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { safeIdVar, userProfileVar } from '../../cache';
 import { SafeUtil } from '../../utils/SafeUtil';
@@ -8,6 +8,9 @@ import { TITem } from '../../context/AuthContext';
 import { FileTypeUtil } from '../../utils/FileTypeUtil';
 
 const Item = ({ item }: { item: TITem }) => {
+  const {
+    theme: { colors },
+  } = useTheme();
   return (
     <View
       style={{
@@ -15,7 +18,7 @@ const Item = ({ item }: { item: TITem }) => {
         flexDirection: 'row',
         alignItems: 'center',
         borderWidth: 1,
-        borderColor: '#cccccc',
+        borderColor: colors.divider1,
       }}>
       <MaterialCommunityIcons
         name={FileTypeUtil.getFileTypeIcon(item.type)}

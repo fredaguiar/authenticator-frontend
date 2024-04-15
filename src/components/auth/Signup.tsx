@@ -1,6 +1,5 @@
 import { Button, Input, Text, CheckBox } from '@rneui/themed';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import KeyboardAvoid from '../../utils/KeyboardAvoid';
@@ -12,6 +11,7 @@ import { PublicRootStackParams } from '../../nav/RootNavigator';
 import { COUNTRIES, LANGUAGES } from '../../Const';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import SpinnerUI from '../ui/SpinnerUI';
+import PickerUI from '../ui/PickerUI';
 
 const validationSchema = yup.object().shape({
   firstName: yup.string().required('Name is Required'),
@@ -71,25 +71,22 @@ const Signup = ({}: {}) => {
           {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
             <View style={{ display: 'flex', alignItems: 'center' }}>
               <Text style={styles.inputLabel}>Language</Text>
-              <Picker
-                style={styles.dropDown}
+
+              <PickerUI
                 selectedValue={values.language}
-                onValueChange={handleChange('language')}
-                mode="dropdown">
-                {LANGUAGES.map((item) => (
-                  <Picker.Item key={item.value} label={item.label} value={item.value} />
-                ))}
-              </Picker>
+                onValueChange={() => {
+                  handleChange('language');
+                }}
+                items={LANGUAGES as any}
+              />
               <Text style={styles.inputLabel}>Country</Text>
-              <Picker
-                style={styles.dropDown}
+              <PickerUI
                 selectedValue={values.country}
-                onValueChange={handleChange('country')}
-                mode="dropdown">
-                {COUNTRIES.map((item) => (
-                  <Picker.Item key={item.value} label={item.label} value={item.value} />
-                ))}
-              </Picker>
+                onValueChange={() => {
+                  handleChange('country');
+                }}
+                items={COUNTRIES as any}
+              />
               <Input
                 label="First name"
                 onChangeText={handleChange('firstName')}
@@ -208,11 +205,6 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     marginHorizontal: 5,
     fontWeight: '800',
-  },
-  dropDown: {
-    backgroundColor: 'white',
-    width: 200,
-    marginVertical: 10,
   },
 
   inputLabel: { marginRight: 10, fontSize: 16 },

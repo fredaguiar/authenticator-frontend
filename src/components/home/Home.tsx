@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
-import { Divider } from '@rneui/themed';
+import { View, StyleSheet } from 'react-native';
+import { Divider, useTheme } from '@rneui/themed';
 import SafeList from '../safe/SafeList';
 import Bottom from '../bottom/Bottom';
 import LifeCheck from '../header/LifeCheck';
@@ -11,6 +11,9 @@ import { safeIdVar, userProfileVar } from '../../cache';
 import ItemList from '../safe/ItemList';
 
 const Home = () => {
+  const {
+    theme: { colors },
+  } = useTheme();
   const user = useReactiveVar(userProfileVar);
   const safe = SafeUtil.getSafe(user, useReactiveVar(safeIdVar));
 
@@ -20,8 +23,8 @@ const Home = () => {
         <LifeCheck />
         <SearchFiles />
       </View>
-      <Divider style={{ borderWidth: 1, borderColor: 'gray' }} />
-      <View style={[styles.containerScrollView, { backgroundColor: 'white' }]}>
+      <Divider style={{ borderWidth: 1, borderColor: colors.divider2 }} />
+      <View style={[styles.containerScrollView, { backgroundColor: colors.background }]}>
         {!safe ? <SafeList /> : <ItemList />}
       </View>
       <Bottom />

@@ -1,5 +1,5 @@
 import { InMemoryCache, gql, makeVar } from '@apollo/client';
-import { TSafe, TUser } from './context/AuthContext';
+import { TUser } from './context/AuthContext';
 
 export const isLoggedInVar = makeVar<boolean>(false);
 export const userProfileVar = makeVar<TUser | null>(null);

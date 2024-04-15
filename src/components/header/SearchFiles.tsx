@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Input, SearchBar } from '@rneui/themed';
-import { Picker } from '@react-native-picker/picker';
+import { Input, SearchBar, useTheme } from '@rneui/themed';
 import { SORT_SAFE_BY } from '../../Const';
 import { useReactiveVar } from '@apollo/client';
 import { safeIdVar, userProfileVar } from '../../cache';
 import { SafeUtil } from '../../utils/SafeUtil';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { PrivateRootStackParams } from '../../nav/RootNavigator';
+import GlobalStyles from '../../styles/GlobalStyles';
+import PickerUI from '../ui/PickerUI';
 
 const SearchFiles = () => {
   const [search, setSearch] = useState('');
@@ -16,6 +17,9 @@ const SearchFiles = () => {
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
   const user = useReactiveVar(userProfileVar);
   const safe = SafeUtil.getSafe(user, useReactiveVar(safeIdVar));
+  const {
+    theme: { colors },
+  } = useTheme();
 
   const updateSearch = (search: string) => {
     // setSearch(search);
@@ -24,7 +28,7 @@ const SearchFiles = () => {
   };
 
   return (
-    <View style={[{ paddingTop: 10 }]}>
+    <View style={{ paddingTop: 10, backgroundColor: colors.background1 }}>
       <View
         style={{
           display: 'flex',
@@ -51,7 +55,7 @@ const SearchFiles = () => {
           containerStyle={{
             width: 350,
             maxHeight: 65,
-            backgroundColor: 'white',
+            backgroundColor: colors.input1,
             borderRadius: 10,
             borderColor: '#cccccc',
             borderWidth: 1,
@@ -59,13 +63,13 @@ const SearchFiles = () => {
             borderBottomWidth: 0,
           }}
           style={{
-            backgroundColor: 'white',
+            backgroundColor: colors.input1,
             fontSize: 22,
             color: 'black',
             textDecorationLine: 'none',
             borderBottomWidth: 0,
           }}
-          inputContainerStyle={{ backgroundColor: 'white' }}
+          inputContainerStyle={{ backgroundColor: colors.input1 }}
         />
       </View>
       {!safe && (
@@ -79,15 +83,14 @@ const SearchFiles = () => {
             marginBottom: 10,
           }}>
           <Text style={{ fontSize: 18 }}>My Safes 9 of 10</Text>
-          <Picker
-            style={styles.dropDown}
+
+          <PickerUI
             selectedValue={sortSafe}
-            onValueChange={setSortSafe}
-            mode="dropdown">
-            {SORT_SAFE_BY.map((item) => (
-              <Picker.Item key={item.value} label={item.label} value={item.value} />
-            ))}
-          </Picker>
+            onValueChange={(val: string | number) => {
+              setSortSafe(val as string);
+            }}
+            items={SORT_SAFE_BY as any}
+          />
         </View>
       )}
       {safe && (
@@ -112,7 +115,7 @@ const SearchFiles = () => {
                   display: 'flex',
                   flexDirection: 'row',
                   alignItems: 'center',
-                  backgroundColor: '#f77272',
+                  backgroundColor: colors.primary,
                   padding: 5,
                   borderRadius: 10,
                 }}>
@@ -126,13 +129,5 @@ const SearchFiles = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  dropDown: {
-    backgroundColor: 'white',
-    width: 250,
-    marginVertical: 10,
-  },
-});
 
 export default SearchFiles;

@@ -1,6 +1,6 @@
 import { FlatList, TouchableOpacity, View } from 'react-native';
 import { useReactiveVar } from '@apollo/client';
-import { Text } from '@rneui/themed';
+import { Text, useTheme } from '@rneui/themed';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { safeIdVar, userProfileVar } from '../../cache';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
@@ -15,6 +15,9 @@ const SafeItem = ({
   safeId: string;
   navigation: NavigationProp<PrivateRootStackParams>;
 }) => {
+  const {
+    theme: { colors },
+  } = useTheme();
   return (
     <View
       style={{
@@ -29,7 +32,7 @@ const SafeItem = ({
           flexGrow: 1,
           alignItems: 'center',
           borderWidth: 1,
-          backgroundColor: '#eeeeee',
+          backgroundColor: colors.row1,
           borderRadius: 10,
           margin: 5,
         }}
@@ -52,8 +55,11 @@ const SafeItem = ({
 const SafeList = () => {
   const user = useReactiveVar(userProfileVar);
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
+  const {
+    theme: { colors },
+  } = useTheme();
   return (
-    <View>
+    <View style={{}}>
       <FlatList
         data={user?.safes}
         renderItem={({ item }) => (

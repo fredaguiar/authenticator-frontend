@@ -1,9 +1,8 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import * as SecureStore from 'expo-secure-store';
 import { ApolloError, gql, useMutation, useQuery } from '@apollo/client';
-import { LOCAL_GET_USER_PROFILE, isLoggedInVar, userProfileVar } from '../cache';
-import { client } from '../App';
+import { LOCAL_GET_USER_PROFILE, userProfileVar } from '../cache';
 
 export const JWT_TOKEN = 'JID';
 

@@ -3,10 +3,31 @@ import { createTheme } from '@rneui/themed';
 const PRIMARY = '#aa60ff';
 export const FORM_COMPONENT_WIDTH = 'auto';
 
+const LightColors = {
+  primary: '#E1AB55',
+  secondary: '#F3CF94',
+  important: '#f77272',
+  disabled: '#DEDEDE',
+  success: '#2CA62E',
+  highlight: '#00ff00',
+  danger: '#f77272',
+  warning: '#ffc107',
+  error: '#dc3545',
+  divider1: '#8EA18D',
+  divider2: '#4E584D',
+  row1: '#f6f1f1',
+  row2: '#f6f1f1',
+  info: '#17a2b8',
+  background: 'white',
+  background1: '#FEF5D4',
+  background2: '#fdeca6',
+  input1: 'white',
+  input2: '#C2BB8D',
+};
+
 export const theme = createTheme({
-  lightColors: {
-    primary: PRIMARY,
-  },
+  lightColors: LightColors,
+  mode: 'light',
   components: {
     Button: {
       radius: 20,

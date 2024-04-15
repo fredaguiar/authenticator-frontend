@@ -1,18 +1,22 @@
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { useReactiveVar } from '@apollo/client';
-import { Button, Switch, Text } from '@rneui/themed';
+import { Button, Switch, Text, useTheme } from '@rneui/themed';
 import * as yup from 'yup';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { safeIdVar, userProfileVar } from '../../cache';
 import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { PrivateRootStackParams } from '../../nav/RootNavigator';
-import { Picker } from '@react-native-picker/picker';
 import { useState } from 'react';
 import { IconButtonsSaveCancel } from '../ui/IconButtons';
 import { Formik } from 'formik';
 import useUpdateSafeOptions from '../../hooks/useUpdateSafeOptions';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import StorageUsage from '../ui/StorageUsage';
+import SwitchUI from '../ui/SwitchUI';
+import GlobalStyles from '../../styles/GlobalStyles';
+import PickerUI, { TPickerItem } from '../ui/PickerUI';
+import PickerItemUI from '../ui/PickerItemUI';
+import { Picker } from '@react-native-picker/picker';
 // import useUpdateSafeOptions from '../../hooks/useUpdateSafeOptions';
 
 const validationSchema = yup.object().shape({});
@@ -27,9 +31,12 @@ const SafeOption = () => {
   const [selectedSafeId, setSelectedSafeId] = useState(safeId);
   const { updateSafeOptions, loading, error } = useUpdateSafeOptions();
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
+  const {
+    theme: { colors },
+  } = useTheme();
 
   return (
-    <View style={styles.container}>
+    <View style={{ backgroundColor: colors.background1 }}>
       <Formik
         validationSchema={validationSchema}
         initialValues={{ name: '' }}
@@ -41,17 +48,13 @@ const SafeOption = () => {
               marginTop: 20,
               marginBottom: 20,
             }}>
-            <Picker
-              style={[styles.dropDown, { marginBottom: 20 }]}
-              selectedValue={selectedSafeId || undefined}
-              onValueChange={(val: string) => {
-                setSelectedSafeId(val);
+            <PickerUI
+              selectedValue={selectedSafeId}
+              onValueChange={(val: string | number) => {
+                setSelectedSafeId(val as string);
               }}
-              mode="dropdown">
-              {user?.safes.map((item) => (
-                <Picker.Item key={item._id} label={item.name} value={item._id} />
-              ))}
-            </Picker>
+              items={user?.safes as any}
+            />
             <View style={[{ display: 'flex', flexDirection: 'row', marginBottom: 20 }]}>
               <Text
                 style={{
@@ -61,11 +64,11 @@ const SafeOption = () => {
                 }}>
                 Auto-sharing:
               </Text>
-              <Switch
-                trackColor={{ false: '#767577', true: '#767577' }}
-                thumbColor={autoSharing ? '#00ff00' : '#f4f3f4'}
-                value={autoSharing}
-                onValueChange={() => setAutoSharing((val) => !val)}
+              <SwitchUI
+                on={false}
+                onToggle={(on: boolean) => {
+                  setAutoSharing(on);
+                }}
               />
               <Text
                 style={{
@@ -75,21 +78,19 @@ const SafeOption = () => {
                 {autoSharing ? 'On' : 'Off'}
               </Text>
             </View>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate('AutoSharingSetup', { safeId });
-              }}
-              style={{ marginBottom: 20 }}>
-              <View
-                style={{
-                  display: 'flex',
-                  backgroundColor: '#f77272',
-                  padding: 5,
-                  borderRadius: 10,
-                }}>
-                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Auto-sharing setup</Text>
-              </View>
-            </TouchableOpacity>
+            <View
+              style={{
+                marginBottom: 20,
+              }}>
+              <ButtonSafe
+                onPress={() => {
+                  navigation.navigate('AutoSharingSetup', { safeId });
+                }}
+                title="Auto-sharing setup"
+                iconName="share-variant-outline"
+              />
+            </View>
+
             <TextInput
               multiline
               numberOfLines={4}
@@ -104,6 +105,7 @@ const SafeOption = () => {
                 borderRadius: 5,
                 backgroundColor: 'white',
                 marginBottom: 20,
+                fontSize: 22,
               }}
             />
             <View
@@ -153,7 +155,7 @@ const ButtonSafe = ({
     onPress={onPress}
     title={title}
     color="primary"
-    containerStyle={{ margin: 5, width: 170 }}
+    containerStyle={{ margin: 5, width: 'auto' }}
     radius="5"
     icon={<MaterialCommunityIcons name={iconName} size={30} style={{}} />}
     iconPosition="left"
@@ -163,15 +165,5 @@ const ButtonSafe = ({
     }}
   />
 );
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: 'rgb(197, 197, 197)',
-  },
-  dropDown: {
-    backgroundColor: 'white',
-    width: 350,
-  },
-});
 
 export default SafeOption;

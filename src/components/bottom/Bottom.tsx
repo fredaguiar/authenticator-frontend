@@ -1,14 +1,18 @@
 import { View } from 'react-native';
-import { Button, Text, makeStyles } from '@rneui/themed';
+import { Button, Text, makeStyles, useTheme } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { PrivateRootStackParams } from '../../nav/RootNavigator';
-import { TItemType } from '../safe/AddItemModal';
+import { TItemType } from '../../typing';
 
 const Bottom = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<PrivateRootStackParams, 'CreateSafe'>>();
   const styles = useStyles({});
+  const {
+    theme: { colors },
+  } = useTheme();
 
   const goTo = (itemType: TItemType) => {
     navigation.navigate('AddItemModal', { itemType });
@@ -27,6 +31,9 @@ const Bottom = () => {
           }}
           title="Create new safe"
           width={200}
+          icon={
+            <MaterialCommunityIcons name="treasure-chest" size={30} style={{ marginRight: 5 }} />
+          }
         />
       </View>
       <Text style={{ fontWeight: 'bold' }}>Add new item:</Text>
@@ -38,9 +45,34 @@ const Bottom = () => {
           justifyContent: 'space-between',
           paddingHorizontal: 5,
         }}>
-        <ButtonAddItem onPress={() => goTo('photo')} title="Photo" />
-        <ButtonAddItem onPress={() => goTo('video')} title="Video" />
-        <ButtonAddItem onPress={() => goTo('audio')} title="Audio" />
+        <ButtonAddItem
+          onPress={() => goTo('photo')}
+          color={colors.secondary}
+          title="Photo"
+          icon={
+            <MaterialCommunityIcons name="camera-outline" size={30} style={{ marginRight: 5 }} />
+          }
+        />
+        <ButtonAddItem
+          onPress={() => goTo('video')}
+          color={colors.secondary}
+          title="Video"
+          icon={
+            <MaterialCommunityIcons name="video-outline" size={30} style={{ marginRight: 5 }} />
+          }
+        />
+        <ButtonAddItem
+          onPress={() => goTo('audio')}
+          color={colors.secondary}
+          title="Audio"
+          icon={
+            <MaterialCommunityIcons
+              name="microphone-outline"
+              size={30}
+              style={{ marginRight: 5 }}
+            />
+          }
+        />
       </View>
       <View
         style={{
@@ -50,9 +82,32 @@ const Bottom = () => {
           justifyContent: 'space-between',
           paddingHorizontal: 5,
         }}>
-        <ButtonAddItem onPress={() => goTo('text')} title="Text" />
-        <ButtonAddItem onPress={() => goTo('file')} title="File" />
-        <ButtonAddItem onPress={() => goTo('password')} title="Password" />
+        <ButtonAddItem
+          onPress={() => goTo('text')}
+          color={colors.secondary}
+          title="Text"
+          icon={
+            <MaterialCommunityIcons name="note-text-outline" size={30} style={{ marginRight: 5 }} />
+          }
+        />
+        <ButtonAddItem
+          onPress={() => goTo('file')}
+          color={colors.secondary}
+          title="File"
+          icon={
+            <MaterialCommunityIcons
+              name="file-document-outline"
+              size={30}
+              style={{ marginRight: 5 }}
+            />
+          }
+        />
+        <ButtonAddItem
+          onPress={() => goTo('password')}
+          color={colors.secondary}
+          title="Password"
+          icon={<MaterialCommunityIcons name="lock-outline" size={30} style={{ marginRight: 5 }} />}
+        />
       </View>
     </View>
   );
@@ -62,28 +117,36 @@ const ButtonAddItem = ({
   onPress,
   title,
   width,
+  color,
+  icon,
 }: {
   onPress: () => void;
   title: string;
   width?: number;
-}) => (
-  <Button
-    onPress={onPress}
-    title={title}
-    color="white"
-    containerStyle={{ margin: 5, width: width ? width : 120 }}
-    radius="5"
-    titleStyle={{
-      color: 'black',
-      fontWeight: 'normal',
-    }}
-  />
-);
+  color?: string;
+  icon?: React.ReactElement;
+}) => {
+  return (
+    <Button
+      onPress={onPress}
+      title={title}
+      color={color}
+      containerStyle={{ margin: 5, width: width ? width : 125 }}
+      radius="5"
+      titleStyle={{
+        color: 'black',
+        fontWeight: 'normal',
+        fontSize: 18,
+      }}
+      icon={icon}
+    />
+  );
+};
 
 const useStyles = makeStyles((theme, props: {}) => ({
   container: {
     height: 250,
-    backgroundColor: 'rgb(197, 197, 197)',
+    backgroundColor: theme.colors.background2,
     justifyContent: 'center',
     alignItems: 'center',
   },

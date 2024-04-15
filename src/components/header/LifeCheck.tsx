@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Platform } from 'react-native';
-import { Switch } from '@rneui/themed';
+import { View, Text } from 'react-native';
+import { useTheme } from '@rneui/themed';
 import { userProfileVar } from '../../cache';
+import SwitchUI from '../ui/SwitchUI';
+import { boolean } from 'yup';
 
 const LifeCheck = () => {
   const [lifeCheck, setLifeCheck] = useState(false);
   const user = userProfileVar();
+  const {
+    theme: { colors },
+  } = useTheme();
 
   return (
     <View
@@ -16,7 +21,7 @@ const LifeCheck = () => {
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: 4,
-          backgroundColor: 'rgb(197, 197, 197)',
+          backgroundColor: colors.background2,
         },
       ]}>
       <Text
@@ -35,11 +40,11 @@ const LifeCheck = () => {
           Life check
         </Text>
         <View style={[{ display: 'flex', flexDirection: 'row' }]}>
-          <Switch
-            trackColor={{ false: '#767577', true: '#767577' }}
-            thumbColor={lifeCheck ? '#00ff00' : '#f4f3f4'}
-            value={lifeCheck}
-            onValueChange={() => setLifeCheck((val) => !val)}
+          <SwitchUI
+            on={false}
+            onToggle={(on: boolean) => {
+              setLifeCheck(on);
+            }}
           />
           <Text
             style={{
